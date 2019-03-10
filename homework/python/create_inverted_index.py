@@ -29,6 +29,7 @@ class InvertedIndexReducer:
 
   def reduce(self):
     k, v = line.split('\t')
+    if not k in inverted_index or not v in inverted_index[k]
     inverted_index[key].append(v)
 
 if __name__ == "__main__":
