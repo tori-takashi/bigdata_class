@@ -16,7 +16,8 @@ we can download jar from MVN repository.
 ## how to use
 
 1. download hadoop streaming v3.2
-Available to download script.
+
+Download script available.
 ```
 $ chmod +x *.sh
 $ ./download_hadoopstreaming-3.2.sh
