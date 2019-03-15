@@ -1,4 +1,8 @@
+#### for TA
+URL : https://github.com/tori-takashi/bigdata_class/tree/master/homework/python
+
 # Hadoop streaming
+
 Hadoop streaming is a jar that enable to bridge among input, mapper, reducer and output, by using stdin and stdout.
 
 we can download jar from MVN repository.
@@ -12,8 +16,9 @@ we can download jar from MVN repository.
 ## how to use
 
 1. download hadoop streaming v3.2
-you're available to download script.
+Available to download script.
 ```
+$ chmod +x *.sh
 $ ./download_hadoopstreaming-3.2.sh
 ```
 
@@ -23,6 +28,6 @@ $ ./invindex.sh
 ```
 
 ## details
-Mapper and reducer uses python3 and it's declare at the top of **.py
+Mapper and reducer uses python3 and it's declare at the top of \*.py
 
-Please refer to ./invindex.sh if you want to know the way to launch mapper and reducer with hadoop streaming.
+Please refer to `./invindex.sh` if you want to know the way to launch mapper and reducer with hadoop streaming.
