@@ -19,87 +19,19 @@
 #     EAS is deployed by the platform after platform receive the agreements from both buyer and seller. The userID of the API is consumerID.
 #     Only provider and consumer of the EAS that has been deployed can revoke the deal.
 #     Those deals that are already revoked should not be revoked twice.
-require 'HTTPClient'
+require 'httpclient'
 
 class DeepqClient
-  @URL = 'https://dxdl.deepq.com:5000/'.freeze
-
   def initialize
     # constructor
+    @@URL = 'https://dxdl.deepq.com:5000/'.freeze
     @client = HTTPClient.new
-    @client.debug_dev = $stderr
+    puts connect_test.code
   end
 
-  class DataDirectory
-    def initialize
-      @data_directory_id
-      @users = {}
-      @data_entries = {}
-    end
-
-    def create_directoy
-      path = URL + 'directory/new'
-      params = {}
-    end
+  def connect_test
+    response = @client.get(@@URL)
   end
-
-  class User
-    def initialize
-      @user_id
-      @password
-      @user_type
-    end
-
-    def create_user
-      path = URL + 'user/register'
-      params = {}
-    end
-  end
-
-  class DataEntry
-    def initialize
-      @user_ids = {}
-      @password
-      @offer_price
-      @due_date
-      @data_certificate
-      @data_access_path
-    end
-
-    def create_data_entry
-      path = URL + 'entry/create'
-      params = {}
-    end
-
-    def count_data_entry
-      path = URL + 'entry/count'
-      params = {}
-    end
-
-    def get_data_entry_by_index
-      path = URL + 'entry/index'
-      params = {}
-    end
-
-    def get_data_entry_by_data_certificate
-      path = URL + 'entry/dctf'
-      params = {}
-    end
-
-    def create_eas
-      path = URL + 'eas/deploy'
-      params = {}
-    end
-
-    def get_eas
-      path = URL + 'eas/sid'
-      params = {}
-    end
-
-    def revoke_eas
-      path = URL + 'eas/revoke'
-      params = {}
-    end
-  end
-  
 end
+
+a = DeepqClient.new
