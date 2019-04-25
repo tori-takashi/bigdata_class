@@ -20,18 +20,45 @@
 #     Only provider and consumer of the EAS that has been deployed can revoke the deal.
 #     Those deals that are already revoked should not be revoked twice.
 require 'httpclient'
+require 'json'
 
 class DeepqClient
   def initialize
     # constructor
     @@URL = 'https://dxdl.deepq.com:5000/'.freeze
     @client = HTTPClient.new
-    puts connect_test.code
+
+    if check_status(deepq_connect_test)
+      puts 'successfully connected to DeepQ service'
+    else
+      puts "connection faild!!!!\nresponse code => #{deepq_connect_test.code} "
+    end
   end
 
-  def connect_test
-    response = @client.get(@@URL)
+  def deepq_connect_test
+    @client.get(@@URL)
+  end
+
+  def check_status(response)
+    HTTP::Status.successful?(response.code)
+  end
+
+  def create_user
+    path = @@URL + 'directory/new/'
+    user_data = JSON.parse(@client.post(path).body)
+    puts user_data['result']['message']
   end
 end
 
+class User
+  def initialize; end
+
+  def create_user; end
+end
+
+class DataDirectory
+  def initialize; end
+end
+
 a = DeepqClient.new
+a.create_user
