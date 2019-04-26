@@ -28,10 +28,12 @@ class DeepqClient
     @@DEEPQ_URL = 'https://dxdl.deepq.com:5000/'.freeze
     @client = HTTPClient.new
 
+    puts 'connecting to DeepQ service....'
+
     if deepq_connect_test
-      puts 'successfully connected to DeepQ service'
+      puts "successfully connected to DeepQ service\n"
     else
-      puts "connection faild!!!!\nresponse code => #{deepq_connect_test.code} "
+      puts "connection faild!!!!\nresponse code => #{deepq_connect_test.code}\n"
     end
   end
 
@@ -45,24 +47,27 @@ class DeepqClient
       puts '200 OK response received'
     else
       puts "#{response.code} ERROR request failed"
+      error_data = JSON.parse(response.body)
+      puts error_data['error']
     end
     HTTP::Status.successful?(response.code)
   end
 
   def start_console
     puts <<-'EOS'
-      ************************************
-      ***********DEEPQ CONSOLE************
-      ************************************
+************************************
+***********DEEPQ CONSOLE************
+************************************
     EOS
+
     loop do
       puts <<-"EOS"
-      -------------Main Menu--------------
-      plese type a number from menu below
+-------------Main Menu--------------
+plese type a number from menu below
 
-      0. exit
-      1. user
-      2. directory
+0. exit
+1. user
+2. directory
       EOS
 
       selected_num = gets.to_i
@@ -74,8 +79,8 @@ class DeepqClient
 
       when 1
         puts <<-EOS
-        0. back
-        1. create user
+0. back
+1. create user
         EOS
 
         selected_num = gets.to_i
@@ -89,8 +94,8 @@ class DeepqClient
 
       when 2
         puts <<-EOS
-        0. back
-        1. create directory
+0. back
+1. create directory
         EOS
 
         selected_num = gets.to_i
@@ -105,14 +110,20 @@ class DeepqClient
     end
   end
 
-  def request(url, params)
-    response = @client.post(url, query: params)
+  def purified_output(hash)
+    hash.each do |k, v|
+      puts "#{k} : #{v}"
+    end
+  end
 
-    if check_response(response)
+  def request(method, url, params)
+    response = @client.post(url, body: params) if method == 'get'
+    response = @client.post(url, body: params) if method == 'post'
+
+    if check_response_status(response)
       result_data = JSON.parse(response.body)
-      puts result_data['result']['message']
 
-      result_data
+      purified_output(result_data['result'])
     end
   end
 
@@ -134,15 +145,73 @@ class DeepqClient
   def create_directory
     url = @@DEEPQ_URL + 'directory/new/'
     request_params = []
+
     params = build_params(request_params)
-    request(url, params)
+    request('post', url, params)
   end
 
   def create_user
     url = @@DEEPQ_URL + 'user/register'
     request_params = %w[directoryID userType userID password]
+
     params = build_params(request_params)
-    puts params
+    request('post', url, params)
+  end
+
+  def create_data_entry
+    url = @@DEEPQ_URL + 'entry/create'
+    request_params = %w[directoryID userID password offerPrice dueDate dataCertificate dataOwner dataDescription dataAccessPath]
+
+    params = build_params(request_params)
+    request('post', url, params)
+  end
+
+  def create_eas
+    url = @@DEEPQ_URL + 'eas/deploy'
+    request_params = %w[directoryID userID dataCertificate expirationDate providerAgreement consumerAgreement]
+
+    params = build_params(request_params)
+    request('post', url, params)
+  end
+
+  def revoke_eas
+    url = @@DEEPQ_URL + 'eas/revoke'
+    request_params = %w[directoryID userType userID password EASID]
+
+    params = build_params(request_params)
+    request('post', url, params)
+  end
+
+  def count_data_entry
+    url = @@DEEPQ_URL + 'entry/count'
+    request_params = %w[directoryID]
+
+    params = build_params(request_params)
+    request('get', url, params)
+  end
+
+  def get_data_entry_by_index
+    url = @@DEEPQ_URL + 'entry/index'
+    request_params = %w[directoryID index]
+
+    params = build_params(request_params)
+    request('get', url, params)
+  end
+
+  def get_data_entry_by_data_certificate
+    url = @@DEEPQ_URL + 'entry/dctf'
+    request_params = %w[directoryID dataCertificate]
+
+    params = build_params(request_params)
+    request('get', url, params)
+  end
+
+  def get_eas
+    url = @@DEEPQ_URL + 'eas/sid'
+    request_params = %w[EASID]
+
+    params = build_params(request_params)
+    request('get', url, params)
   end
 end
 
