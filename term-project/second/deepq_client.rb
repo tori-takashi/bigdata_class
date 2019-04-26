@@ -223,7 +223,7 @@ end
   end
 
   def request(method, url, params)
-    response = @client.post(url, body: params) if method == 'get'
+    response = @client.get( url, body: params) if method == 'get'
     response = @client.post(url, body: params) if method == 'post'
 
     if check_response_status(response)
