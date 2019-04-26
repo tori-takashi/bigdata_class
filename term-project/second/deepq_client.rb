@@ -25,10 +25,10 @@ require 'json'
 class DeepqClient
   def initialize
     # constructor
-    @@URL = 'https://dxdl.deepq.com:5000/'.freeze
+    @@DEEPQ_URL = 'https://dxdl.deepq.com:5000/'.freeze
     @client = HTTPClient.new
 
-    if check_status(deepq_connect_test)
+    if deepq_connect_test
       puts 'successfully connected to DeepQ service'
     else
       puts "connection faild!!!!\nresponse code => #{deepq_connect_test.code} "
@@ -36,29 +36,115 @@ class DeepqClient
   end
 
   def deepq_connect_test
-    @client.get(@@URL)
-  end
-
-  def check_status(response)
+    response = @client.get(@@DEEPQ_URL)
     HTTP::Status.successful?(response.code)
   end
 
+  def check_response_status(response)
+    if HTTP::Status.successful?(response.code)
+      puts '200 OK response received'
+    else
+      puts "#{response.code} ERROR request failed"
+    end
+    HTTP::Status.successful?(response.code)
+  end
+
+  def start_console
+    puts <<-'EOS'
+      ************************************
+      ***********DEEPQ CONSOLE************
+      ************************************
+    EOS
+    loop do
+      puts <<-"EOS"
+      -------------Main Menu--------------
+      plese type a number from menu below
+
+      0. exit
+      1. user
+      2. directory
+      EOS
+
+      selected_num = gets.to_i
+
+      case selected_num
+
+      when 0
+        break
+
+      when 1
+        puts <<-EOS
+        0. back
+        1. create user
+        EOS
+
+        selected_num = gets.to_i
+
+        case selected_num
+        when 0
+          next
+        when 1
+          create_user
+        end
+
+      when 2
+        puts <<-EOS
+        0. back
+        1. create directory
+        EOS
+
+        selected_num = gets.to_i
+
+        case selected_num
+        when 0
+          next
+        when 1
+          create_directory
+        end
+      end
+    end
+  end
+
+  def request(url, params)
+    response = @client.post(url, query: params)
+
+    if check_response(response)
+      result_data = JSON.parse(response.body)
+      puts result_data['result']['message']
+
+      result_data
+    end
+  end
+
+  def build_params(request_params)
+    params = {}
+    request_params.each do |request_param|
+      params[request_param] = ''
+    end
+
+    params_size = params.size
+
+    params.each_with_index do |(_param_key, _param_value), i|
+      puts "#{i + 1}/#{params_size}. please type #{_param_key}"
+      param_value = gets
+      params[_param_key] = param_value.strip!
+    end
+  end
+
+  def create_directory
+    url = @@DEEPQ_URL + 'directory/new/'
+    request_params = []
+    params = build_params(request_params)
+    request(url, params)
+  end
+
   def create_user
-    path = @@URL + 'directory/new/'
-    user_data = JSON.parse(@client.post(path).body)
-    puts user_data['result']['message']
+    url = @@DEEPQ_URL + 'user/register'
+    request_params = %w[directoryID userType userID password]
+    params = build_params(request_params)
+    puts params
   end
 end
 
-class User
-  def initialize; end
-
-  def create_user; end
-end
-
-class DataDirectory
-  def initialize; end
-end
-
-a = DeepqClient.new
-a.create_user
+client = DeepqClient.new
+client.start_console
