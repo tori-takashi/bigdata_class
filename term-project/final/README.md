@@ -11,5 +11,5 @@ In addition, we can describe these articles.
 ## Presentation
 
 Here is the presentation about the last project.
-[Presentation](https://docs.google.com/presentation/d/1O1RwhxDupmFTM1f15FSyA    diEYzqnaVHaRJ7l8MGZnI8/edit#slide=id.g5175f26029_0_50)
+[Presentation](https://docs.google.com/presentation/d/1O1RwhxDupmFTM1f15FSyAdiEYzqnaVHaRJ7l8MGZnI8/edit#slide=id.g5175f26029_0_50)
 
