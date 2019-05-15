@@ -6,7 +6,7 @@ AnonJournal stands for papers and articles
 written by anonymous researchers and journalists.
 
 We can upvote and support their activities with anonymity.
-In addition, we can describe these articles.
+In addition, we can subscribe these articles.
 
 ## Presentation
 
