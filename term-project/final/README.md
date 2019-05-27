@@ -1,16 +1,24 @@
-# Final Term Project
-This is the final term project named AnonJournal.
+# README
 
-## AnonJournal
-AnonJournal stands for papers and articles
-written by anonymous researchers and journalists.
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-We can upvote and support their activities with anonymity.
-In addition, we can subscribe these articles.
+Things you may want to cover:
 
-## Presentation
+* Ruby version
 
-Here is the presentation about the last project.
+* System dependencies
 
-[Presentation](https://docs.google.com/presentation/d/1O1RwhxDupmFTM1f15FSyAdiEYzqnaVHaRJ7l8MGZnI8/edit#slide=id.g5175f26029_0_50)
+* Configuration
 
+* Database creation
+
+* Database initialization
+
+* How to run the test suite
+
+* Services (job queues, cache servers, search engines, etc.)
+
+* Deployment instructions
+
+* ...
