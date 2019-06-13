@@ -22,7 +22,7 @@ module AnonJournal
       g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
-    config.paths.add 'lib', eagerload: true
+    config.paths.add 'lib', eager_load: true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

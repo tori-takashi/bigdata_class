@@ -6,7 +6,7 @@ class DeepqClient
   def initialize
     @@DEEPQ_URL = 'https://dxdl.deepq.com:5000/'.freeze
     @client = HTTPClient.new
-    deepq_connect_test
+    raise unless connect_test
   end
 
   def create_directory
@@ -19,7 +19,7 @@ class DeepqClient
   def create_user(directoryID, userType, userID, password)
 
     url = @@DEEPQ_URL + 'user/register'
-    params = {"directoryID" : directoryID, "userType" : userType, "userID" : userID, "password" : password}
+    params = { directoryID: directoryID, userType: userType, userID: userID, password: password}
     result = request('post', url, params)
   end
 
@@ -27,29 +27,29 @@ class DeepqClient
     dueDate, dataCertificate, dataOwner, dataDescription, dataAccessPath)
     
     url = @@DEEPQ_URL + 'entry/create'
-    params = {"directoryID" : directoryID, "userID" : userID, "password" : password, "offerPrice" : offerPrice,\
-        "dueDate" : dueDate, "dataCertificate" : dataCertificate, "dataOwner" : dataOwner,\
-        "dataDescription" : dataDescription, "dataAccessPath" : dataAccessPath }
+    params = {directoryID: directoryID, userID: userID, password: password, offerPrice: offerPrice,\
+        dueDate: dueDate, dataCertificate: dataCertificate, dataOwner: dataOwner,\
+        dataDescription: dataDescription, dataAccessPath: dataAccessPath }
     result = request('post', url, params)
   end
 
   def create_eas(directoryID, userID, dataCertificate, expirationDate, providerAgreement, consumerAgreement)
 
     url = @@DEEPQ_URL + 'eas/deploy'
-    params = {"directoryID" : directoryID, "userID" : userID, "dataCertificate" : dataCertificate,\
-       "expirationDate" : expirationDate, "providerAgreement" : providerAgreement, "consumerAgreement" : consumerAgreement}
+    params = {directoryID: directoryID, userID: userID, dataCertificate: dataCertificate,\
+       expirationDate: expirationDate, providerAgreement: providerAgreement, consumerAgreement: consumerAgreement}
     result = request('post', url, params)
   end
 
-  def revoke_eas(directoryID, userType, userID, password, EASID)
+  def revoke_eas(directoryID, userType, userID, password, easID)
     url = @@DEEPQ_URL + 'eas/revoke'
-    params = {"directoryID" : directoryID, "userType" : userType, "userID" : userID, "password" : password, "EASID" : EASID}
+    params = {directoryID: directoryID, userType: userType, userID: userID, password: password, easID: easID}
     result = request('post', url, params)
   end
 
   def count_data_entry(directoryID)
     url = @@DEEPQ_URL + 'entry/count'
-    params = {"directoryID" : directoryID}
+    params = {directoryID: directoryID}
     result = request('get', url, params)
   end
 
@@ -60,7 +60,7 @@ class DeepqClient
     request_params_search = { directoryID: directoryID, index: 0 }
     result = {}
 
-    count_params = {"directoryID" : directoryID}
+    count_params = {directoryID: directoryID}
     count_result = request('get', count_url, count_params)
     count = count_result['entryCount'].to_i
 
@@ -75,23 +75,23 @@ class DeepqClient
 
   def get_data_entry_by_index(directoryID, index)
     url = @@DEEPQ_URL + 'entry/index'
-    params = {"directoryID" : directoryID, "index" : index}
+    params = {directoryID: directoryID, index: index}
     result = request('get', url, params)
   end
 
   def get_data_entry_by_data_certificate(directoryID, dataCertificate)
     url = @@DEEPQ_URL + 'entry/dctf'
-    params = {"directoryID" : directoryID, "dataCertificate" : dataCertificate}
+    params = {directoryID: directoryID, dataCertificate: dataCertificate}
     result = request('get', url, params)
   end
 
-  def get_eas(EASID)
+  def get_eas(easID)
     url = @@DEEPQ_URL + 'eas/sid'
-    params = {"EASID" : EASID}
+    params = {easID: easID}
     result = request('get', url, params)
   end
 
-  def deepq_connect_test
+  def connect_test
     response = @client.get(@@DEEPQ_URL)
     HTTP::Status.successful?(response.code)
   end
@@ -105,10 +105,10 @@ class DeepqClient
   end
 
   def request(method, url, params)
-    response = @client.get url, query: params) if method == 'get'
+    response = @client.get(url, query: params) if method == 'get'
     response = @client.post(url, body: params) if method == 'post'
-
-    result_data = JSON.parse(response.body) if check_response_status(response)
+    
+    result_data = JSON.parse(response.body) # if check_response_status(response)
     result_data['result'] if result_data
   end
 
