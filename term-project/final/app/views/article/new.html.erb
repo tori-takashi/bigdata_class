@@ -1,0 +1,19 @@
+<div class = "page-title">
+  Upload your article
+</div>
+
+<div class = "article-input_area">
+  <%= form_with url: article_upload_path do |f| %>
+    <div id="upload-form-title">
+      <%= f.text_field :title %>
+    </div>
+
+    <div id="upload-form-content">
+      <%= f.text_area :content %>
+    </div>
+
+    <div id="upload-form-submit">
+      <%= f.submit "upload" %>
+    </div>
+  <% end %>
+</div>

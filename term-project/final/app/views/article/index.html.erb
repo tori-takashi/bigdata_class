@@ -1,0 +1,12 @@
+<div class = "page-title">
+  <div class = "upload-link">
+    <%= link_to "Upload", new_article_path %>
+  </div>
+  <div class = "article-list">
+    <% @articles.each do |article| %>
+      <div class = "article-list-member">
+        <%= link_to article.fetch_title, article_path(article.id) %>
+      </div>
+    <% end %>
+  </div>
+</div>
