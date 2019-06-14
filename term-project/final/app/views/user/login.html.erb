@@ -1,0 +1,21 @@
+<div class = "page-title">
+  User Login
+</div>
+
+<div class = "user-login-input-area">
+  <%= form_with model: @user, url: user_auth_path do |f| %>
+    <div>
+      <%= f.label "email" %>
+      <%= f.text_field :email %>
+    </div>
+
+    <div>
+      <%= f.label "password" %>
+      <%= f.password_field :password %>
+    </div>
+
+    <div>
+      <%= f.submit "login" %>
+    </div>
+  <% end %>
+</div>

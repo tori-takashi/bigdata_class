@@ -6,4 +6,11 @@ Rails.application.routes.draw do
 
   post "article/upload", to: "article#upload"
 
+  resources :user, only: [:index, :create, :new] do
+  end
+
+  get "user/login", to: "user#login"
+  get "user/logout", to: "user#logout"
+  post "user/auth", to: "user#auth"
+
 end

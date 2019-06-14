@@ -2,6 +2,10 @@
   <%= @article.fetch_title %>
 </div>
 
+<div id="article-author">
+  Author : <%= User.find_by(user_hash: @article.owner_user_hash).user_id %>
+</div>
+
 <div id="article-content">
   <%= @article.fetch_content %>
 </div>

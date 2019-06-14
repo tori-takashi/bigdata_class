@@ -1,7 +1,33 @@
 <div class = "page-title">
-  <div class = "upload-link">
-    <%= link_to "Upload", new_article_path %>
+
+  <div>
+    <% if logged_in? %>
+      <%= current_user.user_id %>  
+    <% end %>
   </div>
+
+  <div>
+  <% if logged_in? %>
+    <%= link_to "Logout", user_logout_path %>
+  <% else %>
+    <div class ="user-registration">
+      <%= link_to "user registration", new_user_path %>
+    </div>
+
+    <div>
+      <%= link_to "Login", user_login_path %>
+    </div>
+  <% end %>
+  </div>
+
+  <%if logged_in? %>
+    <div class = "upload-link">
+      <%= link_to "Upload", new_article_path %>
+    </div>
+  <% end %>
+
+  <p>Article List</p>
+
   <div class = "article-list">
     <% @articles.each do |article| %>
       <div class = "article-list-member">

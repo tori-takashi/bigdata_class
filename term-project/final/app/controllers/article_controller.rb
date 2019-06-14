@@ -15,39 +15,39 @@ class ArticleController < ApplicationController
   end
 
   def upload
-    directoryID = write_to_data_directory(params[:title], params[:content])
-    create_article_record(directoryID)
+    directoryID = write_to_data_directory(params[:title], params[:content], params[:offer_price])
+    owner_user_hash = current_user.user_hash
+    create_article_record(directoryID, owner_user_hash)
     redirect_to article_index_path
   end
 
-  def create_article_record(directoryID)
-    create_article_params = {directoryID: directoryID}
+  def create_article_record(directoryID, owner_user_hash)
+    create_article_params = {directoryID: directoryID, owner_user_hash: owner_user_hash}
     article = Article.new(create_article_params)
-    article.save
+    article.save!
   end
 
-  def write_to_data_directory(title, content)
+  def write_to_data_directory(title, content, offerPrice)
 
     create_directory_result = @deepq_client.create_directory
 
     directoryID = create_directory_result["directoryID"]
     userType = "provider"
-    userID = "testuser001"
-    password = "testuser001"
+    userID = current_user.user_hash
+    password = "testpass"
 
     @deepq_client.create_user(directoryID, userType, userID, password)
     # create user in the data directory
 
-    offerPrice_title = "1000"
+    offerPrice_title = offerPrice
     offerPrice_content = "0"
-    dueDate = "9999"
+    dueDate = "99999999"
     dataCertificate_title = "version_1_part_0"
     dataCertificate_content = "version_1_part_1"
     dataOwner = userID
     dataDescription_title = title
     dataDescription_content = content
     dataAccessPath = "AnonJournal"
-
 
     @deepq_client.create_data_entry(directoryID, userID, password, offerPrice_title, dueDate, \
       dataCertificate_title, dataOwner, dataDescription_title, dataAccessPath)

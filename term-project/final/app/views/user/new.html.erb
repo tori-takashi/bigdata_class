@@ -1,0 +1,31 @@
+<div class = "page-title">
+  User Registration
+</div>
+
+<div class = "user-registration-input-area">
+  <%= form_with model: @user, url: user_index_path do |f| %>
+    <div>
+      <%= f.label "user_id : " %>
+      <%= f.text_field :user_id %>
+    </div>
+
+    <div>
+      <%= f.label "email" %>
+      <%= f.text_field :email %>
+    </div>
+
+    <div>
+      <%= f.label "password" %>
+      <%= f.password_field :password %>
+    </div>
+
+    <div>
+      <%= f.label "password confirm" %>
+      <%= f.password_field :password_confirmation %>
+    </div>
+
+    <div>
+      <%= f.submit "register" %>
+    </div>
+  <% end %>
+</div>
