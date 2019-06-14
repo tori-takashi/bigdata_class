@@ -6,6 +6,29 @@
   Author : <%= User.find_by(user_hash: @article.owner_user_hash).user_id %>
 </div>
 
-<div id="article-content">
-  <%= @article.fetch_content %>
-</div>
+<% if logged_in? %>
+  <% if @is_obtained %>
+    <div id="article-content">
+      <%= @article.fetch_content %>
+    </div>
+  <% else %>
+    <div id="price">
+      <%= @article.fetch_offer_price %> point!
+    </div>
+
+    <div id="purchase-button">
+      <%= button_to "buy it now!", user_buy_article_path(params: {article_id: @article.id} ) %>
+    </div>
+  <% end %>
+<% else %>
+  <div>
+    If you want to see? please login!
+    <div class ="user-registration">
+      <%= link_to "user registration", new_user_path %>
+    </div>
+
+    <div>
+      <%= link_to "Login", user_login_path %>
+    </div>
+ </div>
+<% end %>

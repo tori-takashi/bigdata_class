@@ -14,6 +14,7 @@ class DeepqClient
     url = @@DEEPQ_URL + 'directory/new/'
     params = {}
     result = request('post', url, params)
+    directoryID = result["directoryID"]
   end
 
   def create_user(directoryID, userType, userID, password)
@@ -21,6 +22,12 @@ class DeepqClient
     url = @@DEEPQ_URL + 'user/register'
     params = { directoryID: directoryID, userType: userType, userID: userID, password: password}
     result = request('post', url, params)
+    puts params
+    if result["message"] == "Register user successfully."
+      true
+    else
+      false
+    end
   end
 
   def create_data_entry(directoryID, userID, password, offerPrice, \
@@ -62,14 +69,17 @@ class DeepqClient
 
     count_params = {directoryID: directoryID}
     count_result = request('get', count_url, count_params)
-    count = count_result['entryCount'].to_i
 
-    count.times do |i|
-      request_params_search[:index] = i
-      ith_result = request('get', index_url, request_params_search)
-      result[i] = ith_result
+    if count_result.present?
+      count = count_result['entryCount'].to_i
+
+      count.times do |i|
+        request_params_search[:index] = i
+        ith_result = request('get', index_url, request_params_search)
+        result[i] = ith_result
+      end
+      result
     end
-    result
 
   end
 
@@ -109,6 +119,7 @@ class DeepqClient
     response = @client.post(url, body: params) if method == 'post'
     
     result_data = JSON.parse(response.body) # if check_response_status(response)
+    puts "a"
     result_data['result'] if result_data
   end
 

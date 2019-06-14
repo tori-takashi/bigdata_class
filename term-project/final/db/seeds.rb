@@ -5,3 +5,22 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+testuser1 = User.create(
+    user_hash: nil,
+    email: nil,
+    password_digest: nil,
+    purchase_history_directoryID: nil)
+
+testuser2 = User.create(
+    user_hash: nil,
+    email: nil,
+    password_digest: nil,
+    purchase_history_directoryID: nil)
+
+testuser3 = User.create(
+    user_hash: nil,
+    email: nil,
+    password_digest: nil,
+    purchase_history_directoryID: nil)
+

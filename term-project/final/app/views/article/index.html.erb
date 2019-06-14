@@ -2,7 +2,8 @@
 
   <div>
     <% if logged_in? %>
-      <%= current_user.user_id %>  
+      Hello! <%= current_user.user_id %>, You have <%= current_user.calc_current_point %> point!
+      If you want more point? You can buy it from <%= link_to "here", user_add_point_path(params: { points: 1000 }), method: :post %>
     <% end %>
   </div>
 

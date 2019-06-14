@@ -9,6 +9,7 @@ class ArticleController < ApplicationController
 
   def show
     @article = Article.find(params[:id])
+    @is_obtained = @article.is_bought_from_user?(current_user)
   end
 
   def new
@@ -29,9 +30,7 @@ class ArticleController < ApplicationController
 
   def write_to_data_directory(title, content, offerPrice)
 
-    create_directory_result = @deepq_client.create_directory
-
-    directoryID = create_directory_result["directoryID"]
+    directoryID = @deepq_client.create_directory
     userType = "provider"
     userID = current_user.user_hash
     password = "testpass"
