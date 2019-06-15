@@ -14,6 +14,7 @@ class DeepqClient
     url = @@DEEPQ_URL + 'directory/new/'
     params = {}
     result = request('post', url, params)
+
     directoryID = result["directoryID"]
   end
 
@@ -22,12 +23,9 @@ class DeepqClient
     url = @@DEEPQ_URL + 'user/register'
     params = { directoryID: directoryID, userType: userType, userID: userID, password: password}
     result = request('post', url, params)
-    puts params
-    if result["message"] == "Register user successfully."
-      true
-    else
-      false
-    end
+
+    return true  if result["message"] == "Register user successfully."
+    raise        if result["message"] != "Register user successfully."
   end
 
   def create_data_entry(directoryID, userID, password, offerPrice, \
@@ -38,6 +36,9 @@ class DeepqClient
         dueDate: dueDate, dataCertificate: dataCertificate, dataOwner: dataOwner,\
         dataDescription: dataDescription, dataAccessPath: dataAccessPath }
     result = request('post', url, params)
+
+    return true if result["txHash"].present?
+    raise       if result["txHash"].blank?
   end
 
   def create_eas(directoryID, userID, dataCertificate, expirationDate, providerAgreement, consumerAgreement)
@@ -119,7 +120,8 @@ class DeepqClient
     response = @client.post(url, body: params) if method == 'post'
     
     result_data = JSON.parse(response.body) # if check_response_status(response)
-    puts "a"
+    puts "***result data is below***"
+    puts result_data
     result_data['result'] if result_data
   end
 

@@ -47,7 +47,7 @@ class UserController < ApplicationController
   end
 
   def is_obtained_article?(article)
-    article.is_bought_from_user?(current_user)
+    article.is_obtained?(current_user)
   end
 
   def buy_article
@@ -75,22 +75,14 @@ class UserController < ApplicationController
 
   def add_point
     points = params[:points]
-    dataCertificate = current_user.user_hash
+    dataCertificate = "#{current_user.user_hash},#{SecureRandom.hex(16)}" 
     dataDescription = "Add" + " " + points
     deepq_client = DeepqClient.new
 
-    puts current_user.purchase_history_directoryID
-    puts current_user.user_hash
-    puts dataCertificate
-    puts dataDescription
-
-    res = deepq_client.create_data_entry(current_user.purchase_history_directoryID,\
+    deepq_client.create_data_entry(current_user.purchase_history_directoryID,\
       current_user.user_hash + "_provider", "testpass", points, "99999999", dataCertificate,\
       current_user.user_hash + "_provider", dataDescription, "AnonJournal")
 
-      puts "aaaaaaaaaaaaaaaaaaaaaaaaa"
-      puts res
-      puts "aaaaaaaaaaaaaaaaaaaaaaaaa"
     redirect_to article_index_path
   end
 

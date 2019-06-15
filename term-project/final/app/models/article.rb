@@ -25,7 +25,7 @@ class Article < ApplicationRecord
     result["dataDescription"]
   end
 
-  def is_bought_from_user?(user)
+  def is_obtained?(user)
     @deepq_client = DeepqClient.new
     directoryID = self.directoryID
     dataCertificate = user.user_hash

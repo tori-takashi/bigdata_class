@@ -7,15 +7,12 @@ class User < ApplicationRecord
     histories = deepq_client.list_data_entry(self.purchase_history_directoryID)
     current_point = 0
 
-
-#    if histories.present?
-
-#      histories.each_with_index do |history, i|
- #       transaction_data = history[i]
-  #      current_point += transaction_data
-   #   end
-
-#    end
+    if histories.present?
+      histories.each_with_index do |history, i|
+        transaction_point = history[1]["dataDescription"].split(" ")[1].to_i
+        current_point += transaction_point
+      end
+    end
     
     current_point
   end

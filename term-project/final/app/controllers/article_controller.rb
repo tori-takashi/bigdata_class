@@ -9,7 +9,9 @@ class ArticleController < ApplicationController
 
   def show
     @article = Article.find(params[:id])
-    @is_obtained = @article.is_bought_from_user?(current_user)
+    if (logged_in?)
+      @is_obtained = @article.is_obtained?(current_user)
+    end
   end
 
   def new
