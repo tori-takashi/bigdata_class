@@ -1,7 +1,4 @@
 class ArticleController < ApplicationController
-  def initialize
-    @deepq_client = DeepqClient.new
-  end
 
   def index
     @articles = Article.all
@@ -42,7 +39,7 @@ class ArticleController < ApplicationController
     userID = current_user.user_hash
     password = "testpass"
 
-    @deepq_client.create_user(directoryID, userType, userID, password)
+    deepq_client.create_user(directoryID, userType, userID, password)
     # create user in the data directory
 
     offerPrice_title = offerPrice
@@ -55,7 +52,7 @@ class ArticleController < ApplicationController
     dataDescription_content = content
     dataAccessPath = "AnonJournal"
 
-    @deepq_client.create_data_entry(directoryID, userID, password, offerPrice_title, dueDate, \
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice_title, dueDate, \
       dataCertificate_title, dataOwner, dataDescription_title, dataAccessPath)
       # create data directory for title
     @deepq_client.create_data_entry(directoryID, userID, password, offerPrice_content, dueDate, \
