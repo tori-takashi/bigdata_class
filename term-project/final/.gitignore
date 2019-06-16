@@ -27,5 +27,7 @@
 /public/assets
 .byebug_history
 
+server_directoryID
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key

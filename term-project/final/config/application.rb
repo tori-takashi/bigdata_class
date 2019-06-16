@@ -28,5 +28,59 @@ module AnonJournal
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    require_relative "../lib/deepq_client"
+    deepq_client = DeepqClient.new
+
+    config_file_path = __dir__ + "/../server_directoryID"
+    config.server_info_directoryID = ""
+
+    if File.exist?(config_file_path)
+      puts "loading settings file..."
+      server_info_directoryID = File.read(config_file_path).chomp
+
+      puts "receiving users and article list directoryID..."
+
+      users_result            = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "users_directoryID")
+      article_list_result     = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "article_list_directoryID")
+
+      puts "setting directoryIDs..."
+      config.users_directoryID        = users_result["dataDescription"]
+      config.article_list_directoryID = article_list_result["dataDescription"]
+    else
+      server_password = ""
+
+      puts "***** Initialize environment *****"
+      puts "type new server password here."
+      server_password = gets.chomp
+
+      puts "\n"
+      puts "creating essential directory IDs now..."
+      users_directoryID        = deepq_client.create_directory
+      article_list_directoryID = deepq_client.create_directory
+      server_info_directoryID  = deepq_client.create_directory
+      
+      puts "establishing the relationship..."
+      deepq_client.create_user(server_info_directoryID, "provider", server_info_directoryID, server_password)
+
+      deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
+        server_password, "0", "0", "users_directoryID", users_directoryID, users_directoryID, "AnonJournal")
+      deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
+        server_password, "0", "0", "article_list_directoryID", article_list_directoryID,\
+        article_list_directoryID, "AnonJournal")
+      
+      puts "creating the config file #{config_file_path} ..."
+      File.open(config_file_path, "w") do |file|
+        file.puts server_info_directoryID
+      end
+
+      puts "applying the configurations..."
+      config.users_directoryID        = users_directoryID
+      config.article_list_directoryID = article_list_directoryID
+    end
+
+    puts "***** initialize completed !!! *****"
+    puts "starting server..."
+
   end
 end

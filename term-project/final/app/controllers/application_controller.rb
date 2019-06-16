@@ -1,49 +1,81 @@
 class ApplicationController < ActionController::Base
   helper_method :logged_in?, :current_user
 
-  @article_list_directoryID = ""
+  # server_info_directoryID
+  # it hold the information about
+  #   <dataEntry>
+  #   // access using index(1)
+  #     (dataDescription)
+  #       article_list_directoryID
+  #       users_directoryID
+  # these directoryID are going to be received using server info directoryID
+
   # it contains below in the separated data entries. use it for index(article list).html
   # it should be used index to show.
-  # it stored CSV format.
+  # it stored as CSV format.
   #
-  # <dataEntry>
-  #   id(incremented)
-  #   title(up to 100 characters in data description)
-  #   price(up to 100000000000 point)
-  #   author(user_directoryID in data description)
-  #   created at (epoch time in data description)
-  #   updated at (epoch time in data desciprion)
-  #   summary(up to 800 characters in data description)
+  # n >= 0
   #
-  #   <article details directoryID(in data description) >
-  #     <dataEntry>
+  # <dataEntry(dataCertificate = version_n)> 
+  # //referenced by count and index and get a newest version information
+  #   (offerPrice)
+  #     price
+  #   (dataDescription)
+  #     title
+  #     author(user_directoryID)
+  #     created at (epoch time)
+  #     updated at (epoch time)
+  #     summary
+  #     *article_details_directoryID
+  #   (dataCertificate)
+  #     version_n
+  #
+  #   (version_n_part_0)<article details directoryID>
+  #   //get latest information using index and dataCertificate
+  #     (offerPrice)
+  #       price
+  #     (dataDescription)
   #       title
-  #       price(offerPrice)
   #       author
-  #       content
-  #       version(dataCertificate)
+  #       created_at
+  #       updated_at
+  #       *purchased_user_directoryID
+  #     (datacertificate)
+  #       version_n_part_0
   #
-  #   <purchased user information>
-  #     <dataEntry>
-  #       user_hash(dataCertificate)
-  #       price(offerPrice)
-  #       owner_data(article directoryID)
+  #   (version_n_part_n)<article details directoryID>
+  #   //latest and last part of the article
+  #     (dataDescription)
+  #       content
+  #     (dataCertificate)
+  #       version_n_part_n
+  #
+  #   <purchased user information directoryID>
+  #     (offerPrice)
+  #       price
+  #     (dataDescription)
+  #       "transaction successed"
+  #     (dataCertificate)
+  #       user_hash
   
-  @users_directoryID = ""
   # it contains account information.
+  # one person one dataEntry
   #
   # <dataEntry>
   #   user_id (User defined. up to 20 characters)
-  #   user_hash(SecureRandom.uuid)
+  #   public_user_hash(SecureRandom.uuid)
+  #   private_user_hash(SecureRandom.uuid)
   #   email
-  #   password_digest
+  #   monero_account()
+  #   *purchase point history directoryID
   #
   #   <purchase point history directoryID>
   #     add points
   #     purchase article
   #     withdraw point
   # 
-  @article_update_history_directory_ID = ""
+
+  @deepq_client
 
   def logged_in?
     session[:id] = nil unless user_exsited?
@@ -51,8 +83,15 @@ class ApplicationController < ActionController::Base
   end
 
   def deepq_client
-    @deepq_client = DeepqClient.new unless @deepq_client
-    @deepq_client
+    @deepq_client ||= DeepqClient.new
+  end
+
+  def users_directoryID
+    AnonJournal::Application.config.users_directoryID
+  end
+
+  def article_list_directoryID
+    AnonJournal::Application.config.article_list_directoryID
   end
 
   def current_user
