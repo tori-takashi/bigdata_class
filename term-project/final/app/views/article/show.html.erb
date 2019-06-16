@@ -16,9 +16,15 @@
       <%= @article.fetch_offer_price %> point!
     </div>
 
-    <div id="purchase-button">
-      <%= button_to "buy it now!", user_buy_article_path(params: {article_id: @article.id} ) %>
-    </div>
+    <%if @is_able_to_purchase %>
+      <div id="purchase-article-button">
+        <%= button_to "buy it now!", transaction_purchase_article_path(params: {article_id: @article.id} ) %>
+      </div>
+    <% else %>
+      <div id="purchase-points-button">
+        <%= button_to "purchase points", transaction_add_point_path, method: :get %>
+      </div>
+    <% end %>
   <% end %>
 <% else %>
   <div>

@@ -11,8 +11,12 @@ class ArticleController < ApplicationController
     @article = Article.find(params[:id])
     if (logged_in?)
       @is_obtained = @article.is_obtained?(current_user)
-      puts "is_obtained => #{@is_obtained}"
+      @is_able_to_purchase = has_enough_points?(@article) unless @is_obtained
     end
+  end
+
+  def has_enough_points?(article)
+    current_user.calc_current_point.to_i > article.fetch_offer_price.to_i
   end
 
   def new

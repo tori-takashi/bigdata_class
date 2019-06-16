@@ -1,0 +1,16 @@
+<div class = "page-title">
+  How many points do you want to add?
+</div>
+
+<div>
+  <%= form_with url: transaction_purchase_point_path do |f| %>
+    <div>
+      <%= f.label "Add"%>
+      <%= f.text_field :points %>
+      <%= f.label "points" %>
+    </div>
+    <div>
+      <%= f.submit "purchase" %>
+    </div>
+  <% end %>
+</div>

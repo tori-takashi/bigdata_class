@@ -6,6 +6,11 @@ class ApplicationController < ActionController::Base
     !!session[:id]
   end
 
+  def deepq_client
+    @deepq_client = DeepqClient.new unless @deepq_client
+    @deepq_client
+  end
+
   def current_user
     return unless session[:id]
     if user_exsited?

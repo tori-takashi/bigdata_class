@@ -1,0 +1,18 @@
+<div class = "page-title">
+  Transaction history
+</div>
+
+<div>
+  <% @histories.each do |history| %>
+    <div>
+      <% if is_history_article_directoryID?(get_data_description_from_history(history, 0)) %>
+        purchase 
+        <%= link_to  get_article_title(get_data_description_from_history(history, 0)), \
+          article_path(get_article_id(get_data_description_from_history(history, 0))) %>
+      <% else %>
+        <%= get_data_description_from_history(history, 0) %>
+      <% end %>
+      <%= get_data_description_from_history(history, 1) %>
+    </div>
+  <% end %>
+</div>

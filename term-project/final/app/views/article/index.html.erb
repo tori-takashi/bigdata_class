@@ -2,8 +2,15 @@
 
   <div>
     <% if logged_in? %>
-      Hello! <%= current_user.user_id %>, You have <%= current_user.calc_current_point %> point!
-      If you want more point? You can buy it from <%= link_to "here", user_add_point_path(params: { points: 100000 }), method: :post %>
+      <div>
+        Hello! <%= current_user.user_id %>, You have <%= current_user.calc_current_point %> point!
+      </div>
+      <div>
+        If you want more point? You can buy it from <%= link_to "here", transaction_add_point_path %>
+      </div>
+      <div>
+        Your histories are <%= link_to "here", transaction_purchase_history_path %>
+      </div>
     <% end %>
   </div>
 
