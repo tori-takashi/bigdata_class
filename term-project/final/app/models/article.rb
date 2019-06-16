@@ -26,15 +26,14 @@ class Article < ApplicationRecord
   end
 
   def is_obtained?(user)
+    return true if self.owner_user_hash == user.user_hash
     @deepq_client = DeepqClient.new
     directoryID = self.directoryID
     dataCertificate = user.user_hash
     result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    if result.present?
-      true
-    else
-      false
-    end
+
+    return false if result.nil? || result["message"] != "Data entry is retrieved by data certificate."
+    return true  if result["message"] == "Data entry is retrieved by data certificate."
   end
 
 =begin

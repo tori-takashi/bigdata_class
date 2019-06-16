@@ -46,10 +46,6 @@ class UserController < ApplicationController
     redirect_to article_index_path
   end
 
-  def is_obtained_article?(article)
-    article.is_obtained?(current_user)
-  end
-
   def buy_article
     article = Article.find(params[:article_id])
     deepq_client = DeepqClient.new
@@ -62,7 +58,7 @@ class UserController < ApplicationController
 
     offerPrice = article.fetch_offer_price
     purchase_history_dataCertificate = article.directoryID
-    purchase_history_dataDescription = article.directoryID + " " + -offerPrice
+    purchase_history_dataDescription = "#{article.directoryID} #{-offerPrice.to_i}"
     purchase_history_directoryID = current_user.purchase_history_directoryID
 
     deepq_client.create_data_entry(purchase_history_directoryID, current_user.user_hash + "_provider",\
