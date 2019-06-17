@@ -23,9 +23,6 @@ class DeepqClient
     url = @@DEEPQ_URL + 'user/register'
     params = { directoryID: directoryID, userType: userType, userID: userID, password: password}
     result = request('post', url, params)
-
-    return true  if result["message"] == "Register user successfully."
-    raise        if result["message"] != "Register user successfully."
   end
 
   def create_data_entry(directoryID, userID, password, offerPrice, \
@@ -59,29 +56,23 @@ class DeepqClient
     url = @@DEEPQ_URL + 'entry/count'
     params = {directoryID: directoryID}
     result = request('get', url, params)
+
+    result['entryCount'].to_i
   end
 
   def list_data_entry(directoryID)
-    count_url  = @@DEEPQ_URL + 'entry/count'
     index_url  = @@DEEPQ_URL + 'entry/index'
 
     request_params_search = { directoryID: directoryID, index: 0 }
-    result = {}
+    results = []
 
-    count_params = {directoryID: directoryID}
-    count_result = request('get', count_url, count_params)
-
-    if count_result.present?
-      count = count_result['entryCount'].to_i
-
-      count.times do |i|
-        request_params_search[:index] = i
-        ith_result = request('get', index_url, request_params_search)
-        result[i] = ith_result
-      end
-      result
+    count = count_data_entry(directoryID)
+    count.times do |i|
+      request_params_search[:index] = i
+      ith_result = request('get', index_url, request_params_search)
+      results.push(ith_result)
     end
-
+    results
   end
 
   def get_data_entry_by_index(directoryID, index)
