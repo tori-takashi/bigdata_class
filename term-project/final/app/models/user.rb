@@ -9,7 +9,7 @@ class User < ApplicationRecord
 
     if histories.present?
       histories.each_with_index do |history, i|
-        transaction_point = history[1]["dataDescription"].split(" ")[1].to_i
+        transaction_point = history[1][:dataDescription].split(" ")[1].to_i
         current_point += transaction_point
       end
     end

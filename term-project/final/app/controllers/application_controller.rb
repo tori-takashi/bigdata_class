@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   #   <dataEntry>
   #   // access using index(1)
   #     (dataDescription)
-  #       article_list_directoryID
+  #       article_summaries_directoryID
   #       users_directoryID
   # these directoryID are going to be received using server info directoryID
 
@@ -16,19 +16,21 @@ class ApplicationController < ActionController::Base
   #
   # n >= 0
   #
-  # <dataEntry(dataCertificate = version_n)> 
+
+  # <article_summary_directoryID(dataCertificate = version n)> 
   # //referenced by count and index and get a newest version information
   #   (offerPrice)
   #     price
   #   (dataDescription)
   #     title
+  #     summary
   #     author(user_directoryID)
   #     created at (epoch time)
   #     updated at (epoch time)
-  #     summary
   #     *article_details_directoryID
+  #     *purchased_user_directoryID
   #   (dataCertificate)
-  #     version_n
+  #     version n
   #
   #   (version_n_part_0)<article details directoryID>
   #   //get latest information using index and dataCertificate
@@ -39,7 +41,6 @@ class ApplicationController < ActionController::Base
   #       author
   #       created_at
   #       updated_at
-  #       *purchased_user_directoryID
   #     (datacertificate)
   #       version_n_part_0
   #
@@ -55,16 +56,14 @@ class ApplicationController < ActionController::Base
   #       price
   #     (dataDescription)
   #       "transaction successed"
-  #     (dataCertificate)
-  #       user_hash
   
   # it contains account information.
   # one person one dataEntry
   #
   # <dataEntry>
-  #   user_id (User defined. up to 20 characters)
-  #   public_user_hash(SecureRandom.uuid)
-  #   private_user_hash(SecureRandom.uuid)
+  #   user_name (User defined. up to 20 characters)
+  #   public_user_hash(SecureRandom.uuid)  => kind of user identifier
+  #   private_user_hash(SecureRandom.uuid) => kind of password
   #   email
   #   monero_account()
   #   *purchase point history directoryID
@@ -78,8 +77,8 @@ class ApplicationController < ActionController::Base
   @deepq_client
 
   def logged_in?
-    session[:id] = nil unless user_exsited?
-    !!session[:id]
+    session[:user_public_hash] = nil unless user_exsited?
+    !!session[:user_public_hash]
   end
 
   def deepq_client
@@ -90,21 +89,29 @@ class ApplicationController < ActionController::Base
     AnonJournal::Application.config.users_directoryID
   end
 
-  def article_list_directoryID
-    AnonJournal::Application.config.article_list_directoryID
+  def article_summaries_directoryID
+    AnonJournal::Application.config.article_summaries_directoryID
   end
 
   def current_user
-    return unless session[:id]
+    return unless session[:user_public_hash]
     if user_exsited?
-      @current_user ||= User.find(session[:id]) 
+      #@current_user ||= User.new()
     else
-      session[:id] = nil
+      session[:user_public_hash] = nil
     end
   end
 
+  def register_current_user(directoryID)
+    userID   = current_user.user_public_hash
+    password = current_user.password
+    deepq_client.create_user(directoryID, "provider", userID, password)
+  end
+
   def user_exsited?
-    User.where(id: session[:id]).present?
+    result = deepq_client.get_data_entry_by_data_certificate(users_directoryID, session[:user_private_hash])
+    false if result.nil?
+    true  if result.present?
   end
 
 end

@@ -122,6 +122,7 @@ class DeepqClient
     result_data = JSON.parse(response.body) # if check_response_status(response)
     puts "***result data is below***"
     puts result_data
+    puts "\n"
     result_data['result'] if result_data
   end
 

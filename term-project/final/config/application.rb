@@ -42,11 +42,11 @@ module AnonJournal
       puts "receiving users and article list directoryID..."
 
       users_result            = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "users_directoryID")
-      article_list_result     = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "article_list_directoryID")
+      article_summaries_result     = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "article_summaries_directoryID")
 
       puts "setting directoryIDs..."
-      config.users_directoryID        = users_result["dataDescription"]
-      config.article_list_directoryID = article_list_result["dataDescription"]
+      config.users_directoryID        = users_result[:dataDescription]
+      config.article_summaries_directoryID = article_summaries_result[:dataDescription]
     else
       server_password = ""
 
@@ -56,9 +56,13 @@ module AnonJournal
 
       puts "\n"
       puts "creating essential directory IDs now..."
-      users_directoryID        = deepq_client.create_directory
-      article_list_directoryID = deepq_client.create_directory
-      server_info_directoryID  = deepq_client.create_directory
+      puts "creating users_directoryID..."
+      users_directoryID             = deepq_client.create_directory
+      puts "creating summaries_directoryID..."
+      article_summaries_directoryID = deepq_client.create_directory
+      puts "creating server_info_directoryID..."
+      server_info_directoryID       = deepq_client.create_directory
+      puts "done\n"
       
       puts "establishing the relationship..."
       deepq_client.create_user(server_info_directoryID, "provider", server_info_directoryID, server_password)
@@ -66,8 +70,8 @@ module AnonJournal
       deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
         server_password, "0", "0", "users_directoryID", users_directoryID, users_directoryID, "AnonJournal")
       deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
-        server_password, "0", "0", "article_list_directoryID", article_list_directoryID,\
-        article_list_directoryID, "AnonJournal")
+        server_password, "0", "0", "article_summaries_directoryID", article_summaries_directoryID,\
+        article_summaries_directoryID, "AnonJournal")
       
       puts "creating the config file #{config_file_path} ..."
       File.open(config_file_path, "w") do |file|
@@ -75,8 +79,8 @@ module AnonJournal
       end
 
       puts "applying the configurations..."
-      config.users_directoryID        = users_directoryID
-      config.article_list_directoryID = article_list_directoryID
+      config.users_directoryID             = users_directoryID
+      config.article_summaries_directoryID = article_summaries_directoryID
     end
 
     puts "***** initialize completed !!! *****"

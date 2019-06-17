@@ -1,7 +1,7 @@
 class ArticleController < ApplicationController
 
   def index
-    @articles = Article.all
+    @articles = deepq_client.list_data_entry(article_summaries_directoryID)
   end
 
   def show
@@ -12,54 +12,204 @@ class ArticleController < ApplicationController
     end
   end
 
-  def has_enough_points?(article)
-    current_user.calc_current_point.to_i > article.fetch_offer_price.to_i
-  end
-
   def new
   end
 
   def upload
-    directoryID = write_to_data_directory(params[:title], params[:content], params[:offer_price])
-    owner_user_hash = current_user.user_hash
-    create_article_record(directoryID, owner_user_hash)
+    created_at       = Time.new
+    updated_at       = created_at
+
+    article_summaries_directoryID  = deepq_client.create_directory
+    article_details_directoryID    = deepq_client.create_directory
+    article_contents_directoryID   = deepq_client.create_directory
+    author_manipulate_directoryID  = deepq_client.create_directory
+    purchased_users_directoryID    = deepq_client.create_directory
+
+    register_current_user(article_summaries_directoryID)
+    register_current_user(article_details_directoryID)
+    register_current_user(article_contents_directoryID)
+    register_current_user(author_manipulate_directoryID)
+
+    #article_summaries_directoryID
+      #dataDescription
+        author_id                    = current_user.user_name
+        author_public_hash           = current_user.user_public_hash
+        created_at
+        article_details_directoryID
+        purchased_users_directoryID
+        author_manipulate_directoryID
+
+        article_summary_data_description = article_summary_data_desciption_builder(author_id,\
+          author_public_hash, created_at, article_details_directoryID, purchased_users_directoryID,\
+          author_manipulate_directoryID)
+
+      #dataCertificate
+        dataCertificate_summary      = article_details_directoryID
+
+      #commit article summary
+        article_summary = article_summary_builder(article_summary_data_description, dataCertificate_summary)
+        commit_article_summary(article_summaries_directoryID, article_summary)
+
+    #article_details_directoryID
+      #offerPrice
+        offerPrice                   = params[:offerPrice]
+
+      #dataDescription
+        title                        = params[:title]
+        summary                      = params[:summary]
+        updated_at
+        article_contents_directoryID
+
+        article_details_data_description = article_details_data_description_builder(title, summary,\
+          updated_at, article_contents_directoryID)
+
+      #dataCertificate
+        dataCertificate_details      = "version 0"
+
+      #commit article details
+        article_details = article_details_builder(offerPrice, article_details_data_description,\
+          dataCertificate_details)
+        commit_article_details(article_details)
+
+    #article contents directoryID
+      #dataDescription
+        dataDescription_contents     = params[:contents]
+      #dataCertificate
+        dataCertificate_contents     = "version 0 part 0"
+
+      #commit article contents
+        article_contents = article_contents_builder(dataDescription_contents, dataCertificate_contents)
+        commit_article_contents(article_contents)
+
     redirect_to article_index_path
   end
 
-  def create_article_record(directoryID, owner_user_hash)
-    create_article_params = {directoryID: directoryID, owner_user_hash: owner_user_hash}
-    article = Article.new(create_article_params)
-    article.save!
+  private
+
+  # article summaries functions
+  def article_summary_data_desciption_builder(author_id, author_public_hash, created_at,\
+    article_details_directoryID, purchased_users_directoryID, author_manipulate_directoryID)
+
+    article_summary_data_description =\
+    { author_id: author_id,\
+      author_public_hash: author_public_hash,\
+      created_at: created_at,\
+      article_details_directoryID: article_details_directoryID,\
+      purchased_users_directoryID: purchased_users_directoryID,\
+      author_manipulate_directoryID: author_manipulate_directoryID }
   end
 
-  def write_to_data_directory(title, content, offerPrice)
-
-    directoryID = @deepq_client.create_directory
-    userType = "provider"
-    userID = current_user.user_hash
-    password = "testpass"
-
-    deepq_client.create_user(directoryID, userType, userID, password)
-    # create user in the data directory
-
-    offerPrice_title = offerPrice
-    offerPrice_content = "0"
-    dueDate = "99999999"
-    dataCertificate_title = "version_1_part_0"
-    dataCertificate_content = "version_1_part_1"
-    dataOwner = userID
-    dataDescription_title = title
-    dataDescription_content = content
-    dataAccessPath = "AnonJournal"
-
-    deepq_client.create_data_entry(directoryID, userID, password, offerPrice_title, dueDate, \
-      dataCertificate_title, dataOwner, dataDescription_title, dataAccessPath)
-      # create data directory for title
-    @deepq_client.create_data_entry(directoryID, userID, password, offerPrice_content, dueDate, \
-      dataCertificate_content, dataOwner, dataDescription_content, dataAccessPath)
-      # create data directory for content
-    
-    directoryID
+  def article_summary_builder(dataDescription, dataCertificate)
+    article_summary = { dataDescription: dataDescription, dataCertificate: dataCertificate }
   end
+
+  def commit_article_summary(article_summaries_directoryID, article_summary)
+    directoryID     = article_summaries_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = "0"
+    dueDate         = "0"
+    dataCertificate = article_summary["dataCertificate"]
+    dataOwner       = current_user.user_public_hash
+    dataDescription = article_summary[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
+  # article details functions
+  def article_details_data_description_builder(title, summary, updated_at,\
+    article_contents_directoryID)
+
+    article_details_data_description = \
+    { title: title,\
+      summary: summary,\
+      updated_at: updated_at,\
+      article_contents_directoryID: article_contents_directoryID }
+  end
+
+  def article_details_builder(offerPrice, dataDescription, dataCertificate)
+    article_details = {offerPrice: offerPrice, dataDescription: dataDescription,\
+      dataCertificate: dataCertificate}
+  end
+
+  def commit_article_details(article_details_directoryID, article_details)
+    directoryID     = article_details_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = article_details["offerPrice"]
+    dueDate         = "0"
+    dataCertificate = article_details["dataCertificate"]
+    dataOwner       = current_user.user_public_hash
+    dataDescription = article_details[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
+  #article contents functions
+  def article_contents_builder(dataDescription, dataCertificate)
+    article_contents = {dataDescription: dataDescription, dataCertificate: dataCertificate }
+  end
+
+  def commit_article_contents(article_contents_directoryID, article_contents)
+    directoryID     = article_contents_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = "0"
+    dueDate         = "0"
+    dataCertificate = article_contents["dataCertificate"]
+    dataOwner       = current_user.user_public_hash
+    dataDescription = article_contents[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
+  #author manipulate
+  def author_manipulate_data_description_builder(amount)
+    author_manipulate = { amount: amount, created_at: Time.new }
+  end
+
+  def author_manipulate_builder(author_manipulate_directoryID, author_manipulate)
+    directoryID     = article_contents_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = "0"
+    dueDate         = "0"
+    dataCertificate = SecureRandom.hex(16)
+    dataOwner       = current_user.user_public_hash
+    dataDescription = author_manipulate[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
+  #create purchase history
+  def create_purchase_user(purchased_users_directoryID)
+    register_user(purchased_users_directoryID)
+
+    directoryID     = purchased_users_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = "0" # article_details.offerPrice
+    dueDate         = "0"
+    dataCertificate = current_user.user_public_hash
+    dataOwner       = current_user.user_public_hash
+    dataDescription = { created_at: Time.new }.to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
+  def has_enough_points?(article)
+    current_user.calc_current_point.to_i > article.fetch_offer_price.to_i
+  end
+
 
 end

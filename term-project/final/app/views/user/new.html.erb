@@ -3,25 +3,23 @@
 </div>
 
 <div class = "user-registration-input-area">
-  <%= form_with model: @user, url: user_index_path do |f| %>
+  <%= form_with url: user_index_path do |f| %>
     <div>
-      <%= f.label "user_id : " %>
-      <%= f.text_field :user_id %>
+      <%= f.label "user_private_hash : #{@user_private_hash}" %>
+    </div>
+    <div>
+      <%= f.label "[IMPORTANT!!] user private hash is used for sign in. Please take a note." %>
+      <%= f.hidden_field :user_private_hash, value: @user_private_hash %>
     </div>
 
     <div>
-      <%= f.label "email" %>
-      <%= f.text_field :email %>
+      <%= f.label "user_name : " %>
+      <%= f.text_field :user_name %>
     </div>
 
     <div>
       <%= f.label "password" %>
       <%= f.password_field :password %>
-    </div>
-
-    <div>
-      <%= f.label "password confirm" %>
-      <%= f.password_field :password_confirmation %>
     </div>
 
     <div>

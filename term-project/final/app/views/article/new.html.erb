@@ -10,14 +10,19 @@
         <%= f.text_field :title %>
       </div>
 
-      <div id="upload-form-content">
-        <%= f.label "content : " %>
-        <%= f.text_area :content %>
+      <div id="upload-form-summary">
+        <%= f.label "summary : " %>
+        <%= f.text_field :summary %>
+      </div>
+
+      <div id="upload-form-contents">
+        <%= f.label "contents : " %>
+        <%= f.text_area :contents %>
       </div>
 
       <div id="upload-form-offer-price">
         <%= f.label "offer price : " %>
-        <%= f.text_field :offer_price %>
+        <%= f.text_field :offerPrice %>
       </div>
 
       <div id="upload-form-submit">
@@ -30,7 +35,7 @@
     Please login before posting an article.
   </div>
   <div>
-    <%= link_to new_user_path %>
-    <%= link_to user_login_path %>
+    <%= link_to "Register", new_user_path %>
+    <%= link_to "Login", user_login_path %>
   </div>
 <% end %>

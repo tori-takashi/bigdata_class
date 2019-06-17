@@ -6,7 +6,7 @@ class Article < ApplicationRecord
     directoryID = self.directoryID
     dataCertificate = "version_1_part_0"
     result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    result["dataDescription"]
+    result[:dataDescription]
   end
 
   def fetch_offer_price
@@ -22,7 +22,7 @@ class Article < ApplicationRecord
     directoryID = self.directoryID
     dataCertificate = "version_1_part_1"
     result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    result["dataDescription"]
+    result[:dataDescription]
   end
 
   def is_obtained?(user)

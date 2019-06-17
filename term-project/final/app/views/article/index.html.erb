@@ -3,7 +3,7 @@
   <div>
     <% if logged_in? %>
       <div>
-        Hello! <%= current_user.user_id %>, You have <%= current_user.calc_current_point %> point!
+        Hello! <%= current_user.user_name %>, You have <%= current_user.calc_current_point %> point!
       </div>
       <div>
         If you want more point? You can buy it from <%= link_to "here", transaction_add_point_path %>
@@ -37,10 +37,13 @@
   <p>Article List</p>
 
   <div class = "article-list">
+  <!--
     <% @articles.each do |article| %>
       <div class = "article-list-member">
         <%= link_to article.fetch_title, article_path(article.id) %>
       </div>
     <% end %>
+  -->
+  <%= @articles %>
   </div>
 </div>

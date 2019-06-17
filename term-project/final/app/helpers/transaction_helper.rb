@@ -4,7 +4,7 @@ module TransactionHelper
   end
 
   def get_data_description_from_history(history, index)
-    history[1]["dataDescription"].split(" ")[index]
+    history[1][:dataDescription].split(" ")[index]
   end
 
   def get_article_title(directoryID)
