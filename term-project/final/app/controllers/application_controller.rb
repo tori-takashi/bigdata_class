@@ -72,7 +72,6 @@ class ApplicationController < ActionController::Base
   #     add points
   #     purchase article
   #     withdraw point
-  # 
 
   @deepq_client
 
@@ -94,9 +93,9 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    return unless session[:user_public_hash]
+    return unless session[:user_private_hash] && session[:user_public_hash]
     if user_exsited?
-      #@current_user ||= User.new()
+      @current_user ||= User.fetch_user(session[:user_private_hash])
     else
       session[:user_public_hash] = nil
     end

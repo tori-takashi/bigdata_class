@@ -15,8 +15,7 @@ class User < ApplicationRecord
   end
 
   def calc_current_point
-    deepq_client = DeepqClient.new
-    histories = deepq_client.list_data_entry(self.purchase_history_directoryID)
+    histories = @@deepq_client.list_data_entry(self.user_transactions_directoryID)
     current_point = 0
 
     if histories.present?
