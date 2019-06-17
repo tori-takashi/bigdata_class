@@ -41,12 +41,14 @@ module AnonJournal
 
       puts "receiving users and article list directoryID..."
 
-      users_result            = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "users_directoryID")
-      article_summaries_result     = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID, "article_summaries_directoryID")
+      users_result             = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
+        "users_directoryID")
+      article_summaries_result = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
+        "article_summaries_directoryID")
 
       puts "setting directoryIDs..."
-      config.users_directoryID        = users_result[:dataDescription]
-      config.article_summaries_directoryID = article_summaries_result[:dataDescription]
+      config.users_directoryID             = users_result["dataDescription"]
+      config.article_summaries_directoryID = article_summaries_result["dataDescription"]
     else
       server_password = ""
 
