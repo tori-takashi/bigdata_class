@@ -10,23 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_14_051843) do
+ActiveRecord::Schema.define(version: 2019_06_17_071518) do
 
-  create_table "articles", force: :cascade do |t|
-    t.string "directoryID"
-    t.string "owner_user_hash"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "article_contents", force: :cascade do |t|
+    t.string "contents"
+    t.string "created_at"
+    t.string "version_part"
+  end
+
+  create_table "article_details", force: :cascade do |t|
+    t.string "title"
+    t.string "offerPrice"
+    t.string "updated_at"
+    t.string "article_contents_directoryID"
+    t.string "version"
+  end
+
+  create_table "article_summaries", force: :cascade do |t|
+    t.string "author_name"
+    t.string "author_public_hash"
+    t.string "created_at"
+    t.string "author_manipulate_directoryID"
+    t.string "article_details_directoryID"
+    t.string "purchased_users_directoryID"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "user_name"
-    t.string "user_hash"
-    t.string "email"
-    t.string "password_digest"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "purchase_history_directoryID"
+    t.string "user_public_hash"
+    t.string "user_private_hash"
+    t.string "password"
+    t.string "user_transactions_directoryID"
+    t.string "created_at"
   end
 
 end
