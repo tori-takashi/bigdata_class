@@ -1,12 +1,13 @@
 class ArticleContent < ApplicationRecord
   def self.fetch_article_contents(article_contents_directoryID)
-    count = @@deepq_client.count_data_entry(article_contents_directoryID)
+    count = @@deepq_client.count_data_entry(article_contents_directoryID) -1
     contents = @@deepq_client.get_data_entry_by_index(article_contents_directoryID, count)
 
-    details_data = JSON.parse(details["dataDescription"])
+    contents_data = JSON.parse(contents["dataDescription"])
 
-    contents = details_data["contents"]
-    created_at = details_data["created_at"]
+    contents = contents_data["contents"]
+    created_at = contents_data["created_at"]
+    version = JSON.parse(contents["dataCertificate"])
 
     ArticleContent.new(contents: contents, created_at: created_at)
   end

@@ -1,79 +1,11 @@
 class ApplicationController < ActionController::Base
   helper_method :logged_in?, :current_user
 
-  # server_info_directoryID
-  # it hold the information about
-  #   <dataEntry>
-  #   // access using index(1)
-  #     (dataDescription)
-  #       article_summaries_directoryID
-  #       users_directoryID
-  # these directoryID are going to be received using server info directoryID
-
-  # it contains below in the separated data entries. use it for index(article list).html
-  # it should be used index to show.
-  # it stored as CSV format.
-  #
-  # n >= 0
-  #
-
-  # <article_summary_directoryID(dataCertificate = version n)> 
-  # //referenced by count and index and get a newest version information
-  #   (offerPrice)
-  #     price
-  #   (dataDescription)
-  #     title
-  #     summary
-  #     author(user_directoryID)
-  #     created at (epoch time)
-  #     updated at (epoch time)
-  #     *article_details_directoryID
-  #     *purchased_user_directoryID
-  #   (dataCertificate)
-  #     version n
-  #
-  #   (version_n_part_0)<article details directoryID>
-  #   //get latest information using index and dataCertificate
-  #     (offerPrice)
-  #       price
-  #     (dataDescription)
-  #       title
-  #       author
-  #       created_at
-  #       updated_at
-  #     (datacertificate)
-  #       version_n_part_0
-  #
-  #   (version_n_part_n)<article details directoryID>
-  #   //latest and last part of the article
-  #     (dataDescription)
-  #       content
-  #     (dataCertificate)
-  #       version_n_part_n
-  #
-  #   <purchased user information directoryID>
-  #     (offerPrice)
-  #       price
-  #     (dataDescription)
-  #       "transaction successed"
-  
-  # it contains account information.
-  # one person one dataEntry
-  #
-  # <dataEntry>
-  #   user_name (User defined. up to 20 characters)
-  #   public_user_hash(SecureRandom.uuid)  => kind of user identifier
-  #   private_user_hash(SecureRandom.uuid) => kind of password
-  #   email
-  #   monero_account()
-  #   *purchase point history directoryID
-  #
-  #   <purchase point history directoryID>
-  #     add points
-  #     purchase article
-  #     withdraw point
-
-  @deepq_client
+  def initialize
+    deepq_client
+    users_directoryID
+    article_summaries_directoryID
+  end
 
   def logged_in?
     session[:user_public_hash] = nil unless user_exsited?
@@ -85,11 +17,11 @@ class ApplicationController < ActionController::Base
   end
 
   def users_directoryID
-    AnonJournal::Application.config.users_directoryID
+    @users_directoryID ||= AnonJournal::Application.config.users_directoryID
   end
 
   def article_summaries_directoryID
-    AnonJournal::Application.config.article_summaries_directoryID
+    @article_summaries_directoryID ||= AnonJournal::Application.config.article_summaries_directoryID
   end
 
   def current_user

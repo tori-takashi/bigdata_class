@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2019_06_17_071518) do
 
   create_table "article_details", force: :cascade do |t|
     t.string "title"
+    t.string "summary"
     t.string "offerPrice"
     t.string "updated_at"
     t.string "article_contents_directoryID"
@@ -41,7 +42,6 @@ ActiveRecord::Schema.define(version: 2019_06_17_071518) do
     t.string "user_private_hash"
     t.string "password"
     t.string "user_transactions_directoryID"
-    t.string "created_at"
   end
 
 end

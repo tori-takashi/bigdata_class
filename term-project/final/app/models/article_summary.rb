@@ -18,51 +18,19 @@ class ArticleSummary < ApplicationRecord
       purchased_users_directoryID: purchased_users_directoryID)
   end
 
-  def fetch_article_details(article_details_directoryID)
-    details = ArticleDetail.fetch_article_details(article_details_directoryID)
-
-  end
-
-  def fetch_author_name
-    directoryID = article_summaries_directoryID
-  end
-
   def fetch_title
-    directoryID = self.directoryID
-    dataCertificate = "version_1_part_0"
-    result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    result[:dataDescription]
+    details = fetch_article_details(self.article_details_directoryID)
+    details.title 
   end
 
-  def fetch_offer_price
-    @deepq_client = DeepqClient.new
-    directoryID = self.directoryID
-    dataCertificate = "version_1_part_0"
-    result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    result["offerPrice"]
+  def fetch_offerPrice
+    details = fetch_article_details(self.article_details_directoryID)
+    details.offerPrice
   end
 
-  def fetch_content
-    @deepq_client = DeepqClient.new
-    directoryID = self.directoryID
-    dataCertificate = "version_1_part_1"
-    result = @deepq_client.get_data_entry_by_data_certificate(directoryID, dataCertificate)
-    result[:dataDescription]
-  end
-
-  def fetch_author_public_hash
-  end
-
-  def fetch_created_at
-  end
-
-  def fetch_author_manipulate_directoryID
-  end
-
-  def fetch_purchased_users_directoryID
-  end
-
-  def fetch_article_details_directoryID
+  def fetch_summary
+    details = fetch_article_details(self.article_details_directoryID)
+    details.summary
   end
 
   def is_obtained?(user)
@@ -74,6 +42,10 @@ class ArticleSummary < ApplicationRecord
 
     return false if result.nil? || result["message"] != "Data entry is retrieved by data certificate."
     return true  if result["message"] == "Data entry is retrieved by data certificate."
+  end
+
+  def fetch_article_details(article_details_directoryID)
+    details = ArticleDetail.fetch_article_details(article_details_directoryID)
   end
 
 end

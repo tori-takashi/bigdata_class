@@ -37,13 +37,12 @@
   <p>Article List</p>
 
   <div class = "article-list">
-  <!--
-    <% @articles.each do |article| %>
-      <div class = "article-list-member">
-        <%= link_to article.fetch_title, article_path(article.id) %>
-      </div>
+    <% if @article_summaries %>
+      <% @article_summaries.each do |article_summary| %>
+        <div class = "article-list-member">
+         <%= link_to article_summary.fetch_title, view_article_path(article_details_directoryID: article_summary.article_details_directoryID) %> 
+        </div>
+      <% end %>
     <% end %>
-  -->
-  <%= @articles %>
   </div>
 </div>

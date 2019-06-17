@@ -1,25 +1,28 @@
 class ArticleController < ApplicationController
 
   def index
-    @articles = deepq_client.list_data_entry(article_summaries_directoryID)
+    @article_summaries = []
+    summary_array = deepq_client.list_data_entry(@article_summaries_directoryID)
+    summary_array.each do |summary|
+      article_summary_arguments = JSON.parse(summary["dataDescription"])
+      article_summary = ArticleSummary.new(article_summary_arguments)
+      @article_summaries.push(article_summary)
+    end
   end
 
-  def show
-    @article = Article.find(params[:id])
-    if (logged_in?)
-      @is_obtained = @article.is_obtained?(current_user)
-      @is_able_to_purchase = has_enough_points?(@article) unless @is_obtained
-    end
+  def view
+    @article_summary = ArticleSummary.fetch_article_summary(params[:article_details_directoryID])
+    @details = ArticleDetail.fetch_article_details(params[:article_details_directoryID])
   end
 
   def new
   end
 
   def upload
-    created_at       = Time.new
-    updated_at       = created_at
+    created_at = Time.new
+    updated_at = created_at
 
-    article_summaries_directoryID  = deepq_client.create_directory
+    article_summaries_directoryID  = @article_summaries_directoryID
     article_details_directoryID    = deepq_client.create_directory
     article_contents_directoryID   = deepq_client.create_directory
     author_manipulate_directoryID  = deepq_client.create_directory
@@ -32,14 +35,14 @@ class ArticleController < ApplicationController
 
     #article_summaries_directoryID
       #dataDescription
-        author_id                    = current_user.user_name
+        author_name                    = current_user.user_name
         author_public_hash           = current_user.user_public_hash
         created_at
         article_details_directoryID
         purchased_users_directoryID
         author_manipulate_directoryID
 
-        article_summary_data_description = article_summary_data_desciption_builder(author_id,\
+        article_summary_data_description = article_summary_data_desciption_builder(author_name,\
           author_public_hash, created_at, article_details_directoryID, purchased_users_directoryID,\
           author_manipulate_directoryID)
 
@@ -69,7 +72,7 @@ class ArticleController < ApplicationController
       #commit article details
         article_details = article_details_builder(offerPrice, article_details_data_description,\
           dataCertificate_details)
-        commit_article_details(article_details)
+        commit_article_details(article_details_directoryID, article_details)
 
     #article contents directoryID
       #dataDescription
@@ -79,7 +82,7 @@ class ArticleController < ApplicationController
 
       #commit article contents
         article_contents = article_contents_builder(dataDescription_contents, dataCertificate_contents)
-        commit_article_contents(article_contents)
+        commit_article_contents(article_contents_directoryID, article_contents)
 
     redirect_to article_index_path
   end
@@ -87,11 +90,11 @@ class ArticleController < ApplicationController
   private
 
   # article summaries functions
-  def article_summary_data_desciption_builder(author_id, author_public_hash, created_at,\
+  def article_summary_data_desciption_builder(author_name, author_public_hash, created_at,\
     article_details_directoryID, purchased_users_directoryID, author_manipulate_directoryID)
 
     article_summary_data_description =\
-    { author_id: author_id,\
+    { author_name: author_name,\
       author_public_hash: author_public_hash,\
       created_at: created_at,\
       article_details_directoryID: article_details_directoryID,\
@@ -109,13 +112,14 @@ class ArticleController < ApplicationController
     password        = current_user.password
     offerPrice      = "0"
     dueDate         = "0"
-    dataCertificate = article_summary["dataCertificate"]
+    dataCertificate = article_summary[:dataCertificate]
     dataOwner       = current_user.user_public_hash
     dataDescription = article_summary[:dataDescription].to_json
     dataAccessPath  = "AnonJournal"
 
     deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
       dataCertificate, dataOwner, dataDescription, dataAccessPath)
+
   end
 
   # article details functions
@@ -138,9 +142,9 @@ class ArticleController < ApplicationController
     directoryID     = article_details_directoryID
     userID          = current_user.user_public_hash
     password        = current_user.password
-    offerPrice      = article_details["offerPrice"]
+    offerPrice      = article_details[:offerPrice]
     dueDate         = "0"
-    dataCertificate = article_details["dataCertificate"]
+    dataCertificate = article_details[:dataCertificate]
     dataOwner       = current_user.user_public_hash
     dataDescription = article_details[:dataDescription].to_json
     dataAccessPath  = "AnonJournal"
@@ -160,7 +164,7 @@ class ArticleController < ApplicationController
     password        = current_user.password
     offerPrice      = "0"
     dueDate         = "0"
-    dataCertificate = article_contents["dataCertificate"]
+    dataCertificate = article_contents[:dataCertificate]
     dataOwner       = current_user.user_public_hash
     dataDescription = article_contents[:dataDescription].to_json
     dataAccessPath  = "AnonJournal"

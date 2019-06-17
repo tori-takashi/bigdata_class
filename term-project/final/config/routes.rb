@@ -2,9 +2,10 @@ Rails.application.routes.draw do
   root to: "article#index"
 
   #articles
-  resources :article, only: [:index, :show, :create, :new] do
+  resources :article, only: [:index, :create, :new] do
   end
 
+  get  "article/:article_details_directoryID", to: "article#view", as: "view_article"
   post "article/upload", to: "article#upload"
 
   #users

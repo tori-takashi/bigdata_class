@@ -1,24 +1,24 @@
 <div id="article-title">
-  <%= @article.fetch_title %>
+  <%= @details.title %>
 </div>
 
 <div id="article-author">
-  Author : <%= User.find_by(user_hash: @article.owner_user_hash).user_name %>
+  Author : <%= @article_summary.author_name %>
 </div>
 
 <% if logged_in? %>
   <% if @is_obtained %>
     <div id="article-content">
-      <%= @article.fetch_content %>
+      <%= @details.fetch_article_content %>
     </div>
   <% else %>
     <div id="price">
-      <%= @article.fetch_offer_price %> point!
+      <%= @details.offerPrice %> point!
     </div>
 
     <%if @is_able_to_purchase %>
       <div id="purchase-article-button">
-        <%= button_to "buy it now!", transaction_purchase_article_path(params: {article_id: @article.id} ) %>
+        <%= button_to "buy it now!", transaction_purchase_article_path(params: {article_summary: @article_summary} ) %>
       </div>
     <% else %>
       <div id="purchase-points-button">
