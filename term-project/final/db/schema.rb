@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2019_06_19_071625) do
     t.string "purchased_users_directoryID"
   end
 
-  create_table "user_transaction_histories", force: :cascade do |t|
+  create_table "user_transactions", force: :cascade do |t|
     t.string "amount"
     t.string "reason"
     t.string "details"

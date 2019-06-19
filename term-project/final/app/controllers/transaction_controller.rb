@@ -36,23 +36,61 @@ class TransactionController < ApplicationController
   def add_point
   end
 
-  def purchase_point
-    points = params[:points]
-    dataCertificate = "#{current_user.user_hash},#{SecureRandom.hex(16)}" 
-    dataDescription = "Add #{points}"
+  def purchase_point 
+    user_transactions_directoryID = current_user.user_transactions_directoryID
 
-    deepq_client.create_data_entry(current_user.purchase_history_directoryID,\
-      current_user.user_hash + "_provider", "testpass", points, "99999999", dataCertificate,\
-      current_user.user_hash + "_provider", dataDescription, "AnonJournal")
+    #user_transactions_directoryID
+      #offerPrice
+        offerPrice = params[:point]
 
-    redirect_to article_index_path
+      #dataDescription
+        amount          = params[:point]
+        reason          = "purchase_point"
+        details         = "purchase #{params[:point]} point"
+        created_at      = Time.new
+
+        user_transaction_data_description = user_transaction_data_description_builder(\
+          amount, reason, details, created_at)
+
+      #dataCertificate
+        dataCertificate = SecureRandom.hex(64)
+
+      #commit user transaction
+        user_transaction = user_transaction_builder(offerPrice, user_transaction_data_description,\
+          dataCertificate)
+        commit_user_transaction(current_user.user_transactions_directoryID, user_transaction)
+
+      redirect_to article_index_path
   end
 
   def purchase_history
-    directoryID = current_user.purchase_history_directoryID
+    directoryID = current_user.user_transactions_directoryID
     @histories = deepq_client.list_data_entry(directoryID)
   end
 
-  def article_history
+  def user_transaction_data_description_builder(amount, reason, details, created_at)
+    user_transaction_data_description = { amount: amount, reason: reason, details: details,\
+      created_at: created_at }
   end
+
+  def user_transaction_builder(offerPrice, dataDescription, dataCertificate)
+    user_transaction = {offerPrice: offerPrice, dataDescription: dataDescription,\
+      dataCertificate: dataCertificate}
+  end
+
+  def commit_user_transaction(user_transactions_directoryID, user_transaction)
+    directoryID     = user_transactions_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = user_transaction[:dataDescription][:amount]
+    dueDate         = "0"
+    dataCertificate = user_transaction[:dataCertificate]
+    dataOwner       = current_user.user_public_hash
+    dataDescription = user_transaction[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+  end
+
 end

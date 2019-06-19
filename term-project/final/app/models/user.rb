@@ -15,12 +15,7 @@ class User < ApplicationRecord
   end
 
   def calc_current_point
-    histories = UserTransactionHistory.fetch_user_transaction_history(self.user_transactions_directoryID)
-    unless histories.empty?
-      histories.calc_current_point
-    else
-      0
-    end
+    UserTransaction.calc_current_point(self.user_transactions_directoryID)
   end
 
 end

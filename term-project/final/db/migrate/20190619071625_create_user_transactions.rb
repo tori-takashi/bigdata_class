@@ -1,6 +1,6 @@
-class CreateUserTransactionHistories < ActiveRecord::Migration[5.2]
+class CreateUserTransactions < ActiveRecord::Migration[5.2]
   def change
-    create_table :user_transaction_histories do |t|
+    create_table :user_transactions do |t|
       t.string :amount
       t.string :reason
       t.string :details
