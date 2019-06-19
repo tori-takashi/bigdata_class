@@ -111,7 +111,9 @@ class DeepqClient
     response = @client.post(url, body: params) if method == 'post'
     
     result_data = JSON.parse(response.body) # if check_response_status(response)
-    puts "***result data is below***"
+    puts "*** request data is below***"
+    puts params
+    puts "*** result data is below ***"
     puts result_data
     puts "\n"
     result_data['result'] if result_data
