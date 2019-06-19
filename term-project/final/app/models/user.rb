@@ -15,17 +15,12 @@ class User < ApplicationRecord
   end
 
   def calc_current_point
-    histories = @@deepq_client.list_data_entry(self.user_transactions_directoryID)
-    current_point = 0
-
-    if histories.present?
-      histories.each_with_index do |history, i|
-        transaction_point = history[1][:dataDescription].split(" ")[1].to_i
-        current_point += transaction_point
-      end
+    histories = UserTransactionHistory.fetch_user_transaction_history(self.user_transactions_directoryID)
+    unless histories.empty?
+      histories.calc_current_point
+    else
+      0
     end
-    
-    current_point
   end
 
 end
