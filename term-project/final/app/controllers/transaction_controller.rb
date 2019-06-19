@@ -65,7 +65,8 @@ class TransactionController < ApplicationController
 
   def purchase_history
     directoryID = current_user.user_transactions_directoryID
-    @histories = deepq_client.list_data_entry(directoryID)
+    @transactions = UserTransaction.fetch_user_transactions(directoryID)
+    @current_point = current_user.calc_current_point
   end
 
   def user_transaction_data_description_builder(amount, reason, details, created_at)
