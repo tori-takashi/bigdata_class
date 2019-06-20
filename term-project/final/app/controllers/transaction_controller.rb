@@ -53,7 +53,6 @@ class TransactionController < ApplicationController
         commit_user_transaction(current_user.user_transactions_directoryID, user_transaction)
 
     #user(uploaded author) transactions_directoryID
-    puts "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"
       article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
 
       author_public_hash = article_summary.author_public_hash
@@ -80,7 +79,6 @@ class TransactionController < ApplicationController
         author_transaction = user_transaction_builder(offerPrice, author_transaction_data_description,\
           dataCertificate)
         commit_user_transaction(author_transactions_directoryID, author_transaction)
-      puts "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 
         redirect_to view_article_path(article_details_directoryID)
         
