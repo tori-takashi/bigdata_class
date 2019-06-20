@@ -227,10 +227,10 @@ class ArticleController < ApplicationController
     article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
 
     result = deepq_client.get_data_entry_by_data_certificate(article_summary.purchased_users_directoryID,\
-      current_user.user_private_hash)
+      current_user.user_public_hash)
     
      !result.nil? && !result["dataDescription"].nil? &&\
-       (JSON.parse(result["dataDescription"]))["user_private_hash"] == current_user.user_private_hash
+       (JSON.parse(result["dataDescription"]))["user_public_hash"] == current_user.user_public_hash
   end
 
   def is_author?(article_details_directoryID)

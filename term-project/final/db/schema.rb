@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 2019_06_19_092951) do
   create_table "article_contents", force: :cascade do |t|
     t.string "contents"
     t.string "created_at"
-    t.string "version_part"
   end
 
   create_table "article_details", force: :cascade do |t|
@@ -38,7 +37,7 @@ ActiveRecord::Schema.define(version: 2019_06_19_092951) do
 
   create_table "purchased_users", force: :cascade do |t|
     t.string "offerPrice"
-    t.string "user_private_hash"
+    t.string "user_public_hash"
     t.string "created_at"
   end
 
@@ -52,7 +51,6 @@ ActiveRecord::Schema.define(version: 2019_06_19_092951) do
   create_table "users", force: :cascade do |t|
     t.string "user_name"
     t.string "user_public_hash"
-    t.string "user_private_hash"
     t.string "password"
     t.string "user_transactions_directoryID"
   end

@@ -18,20 +18,20 @@ class TransactionController < ApplicationController
         offerPrice        = article_details.offerPrice
 
       #dataDescription
-        user_private_hash = current_user.user_private_hash
+        user_public_hash = current_user.user_public_hash
         created_at        = Time.new
 
-        user_purchased_data_description = user_purchased_data_description_builder(user_private_hash,\
+        user_purchased_data_description = user_purchased_data_description_builder(user_public_hash,\
           created_at)
 
       #dataCertificate
-        dataCertificate   = current_user.user_private_hash
+        dataCertificate   = current_user.user_public_hash
 
       #commit user_purchased
         user_purchased = user_purchased_builder(offerPrice, user_purchased_data_description, dataCertificate)
         commit_user_purchased(purchased_users_directoryID, user_purchased)
 
-    #user_transactions_directoryID
+    #user(purchasing an article)_transactions_directoryID
       #offerPrice
         offerPrice
 
@@ -51,6 +51,36 @@ class TransactionController < ApplicationController
         user_transaction = user_transaction_builder(offerPrice, user_transaction_data_description,\
           dataCertificate)
         commit_user_transaction(current_user.user_transactions_directoryID, user_transaction)
+
+    #user(uploaded author) transactions_directoryID
+    puts "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"
+      article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
+
+      author_public_hash = article_summary.author_public_hash
+      author_transactions_directoryID = User.fetch_user(author_public_hash).user_transactions_directoryID
+
+      register_current_user(author_transactions_directoryID)
+
+      #offerPrice
+        offerPrice
+
+      #dataDescription
+        amount = offerPrice.to_i
+        reason = "purchased_your_article"
+        details = article_details.title
+        created_at
+
+        author_transaction_data_description = user_transaction_data_description_builder(\
+          amount, reason, details, created_at)
+
+      #dataCertificate
+        dataCertificate = SecureRandom.hex(64)
+
+      #commit author transaction
+        author_transaction = user_transaction_builder(offerPrice, author_transaction_data_description,\
+          dataCertificate)
+        commit_user_transaction(author_transactions_directoryID, author_transaction)
+      puts "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 
         redirect_to view_article_path(article_details_directoryID)
         
@@ -86,8 +116,8 @@ class TransactionController < ApplicationController
       redirect_to article_index_path
   end
 
-  def user_purchased_data_description_builder(user_private_hash, created_at)
-    user_purchased_data_description = { user_private_hash: user_private_hash, created_at: created_at }
+  def user_purchased_data_description_builder(user_public_hash, created_at)
+    user_purchased_data_description = { user_public_hash: user_public_hash, created_at: created_at }
   end
 
   def user_purchased_builder(offerPrice, dataDescription, dataCertificate)

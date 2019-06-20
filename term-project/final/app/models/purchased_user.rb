@@ -7,25 +7,25 @@ class PurchasedUser < ApplicationRecord
       user = JSON.parse(user_data["dataDescription"])
 
       offerPrice        = user_data["offerPrice"].to_i
-      user_private_hash = user["user_private_hash"]
+      user_public_hash = user["user_public_hash"]
       created_at        = user["created_at"]
 
       @purchased_users.push(\
-        PurchasedUser.new(offerPrice: offerPrice, user_private_hash: user_private_hash,\
+        PurchasedUser.new(offerPrice: offerPrice, user_public_hash: user_public_hash,\
             created_at: created_at))
     end
     @user_transactions
   end
 
-  def self.fetch_purchased_user(purchased_users_directoryID, user_private_hash)
-    user_data = @@deepq_client.get_data_entry_by_data_certificate(purchased_users_directoryID, user_private_hash)
+  def self.fetch_purchased_user(purchased_users_directoryID, user_public_hash)
+    user_data = @@deepq_client.get_data_entry_by_data_certificate(purchased_users_directoryID, user_public_hash)
     user = JSON.parse(user_data["dataDescription"])
 
     offerPrice        = user["offerPrice"].to_i
-    user_private_hash = user["user_private_hash"]
+    user_public_hash = user["user_public_hash"]
     created_at        = user["created_at"]
 
-    PurchasedUser.new(offerPrice: offerPrice, user_private_hash: user_private_hash, created_at: created_at)
+    PurchasedUser.new(offerPrice: offerPrice, user_public_hash: user_public_hash, created_at: created_at)
   end
 
 end

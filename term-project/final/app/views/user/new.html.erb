@@ -5,11 +5,10 @@
 <div class = "user-registration-input-area">
   <%= form_with url: user_index_path do |f| %>
     <div>
-      <%= f.label "user_private_hash : #{@user_private_hash}" %>
+      <%= f.label "user_public_hash : #{@user_public_hash}" %>
+      <%= f.hidden_field :user_public_hash, value: @user_public_hash %>
     </div>
     <div>
-      <%= f.label "[IMPORTANT!!] user private hash is used for sign in. Please take a note." %>
-      <%= f.hidden_field :user_private_hash, value: @user_private_hash %>
     </div>
 
     <div>

@@ -2,7 +2,7 @@ class UserController < ApplicationController
   require 'securerandom'
 
   def new
-    @user_private_hash = SecureRandom.uuid
+    @user_public_hash = SecureRandom.uuid
   end
 
   def create
@@ -11,8 +11,7 @@ class UserController < ApplicationController
       #dataDescription
         user_name                     = params[:user_name]
         password                      = params[:password]
-        user_public_hash              = SecureRandom.uuid
-        user_private_hash             = params[:user_private_hash]
+        user_public_hash              = params[:user_public_hash]
         user_transactions_directoryID = deepq_client.create_directory
         created_at                    = Time.new
         #monero account
@@ -20,10 +19,10 @@ class UserController < ApplicationController
         #public_key
 
         user_data_description = user_data_description_builder(user_name, password, user_public_hash,\
-          user_private_hash, user_transactions_directoryID)
+          user_transactions_directoryID, created_at)
 
       #dataCertificate
-        dataCertificate_user = user_private_hash
+        dataCertificate_user = user_public_hash
 
       #commit user
         register_user(users_directoryID, user_public_hash, password)
@@ -32,8 +31,7 @@ class UserController < ApplicationController
         user = user_builder(user_data_description, dataCertificate_user)
         commit_user(users_directoryID, user)
 
-        session[:user_public_hash]  = user[:user_public_hash]
-        session[:user_private_hash] = user[:user_private_hash]
+        session[:user_public_hash] = user[:user_public_hash]
         redirect_to article_index_path
 
   end
@@ -42,13 +40,12 @@ class UserController < ApplicationController
   end
 
   def auth
-    user = deepq_client.get_data_entry_by_data_certificate(users_directoryID, params[:user_private_hash])
-    if user["dataDescription"].present?
+    user = deepq_client.get_data_entry_by_data_certificate(users_directoryID, params[:user_public_hash])
+    if user && user["dataDescription"]
       user_data = JSON.parse(user["dataDescription"])
 
       if user_data["password"].present? && user_data["password"] == params[:password]
         session[:user_public_hash]  = user_data["user_public_hash"]
-        session[:user_private_hash] = user_data["user_private_hash"]
         redirect_to article_index_path
       else
         render user_login_path
@@ -61,21 +58,20 @@ class UserController < ApplicationController
 
   def logout
     session[:user_public_hash]  = nil
-    session[:user_private_hash] = nil
     redirect_to article_index_path
   end
 
   private
 
   def user_data_description_builder(user_name, password, user_public_hash,\
-    user_private_hash, user_transactions_directoryID)
+    user_transactions_directoryID, created_at)
 
     user_data_description =\
     { user_name: user_name,\
       password: password,\
       user_public_hash: user_public_hash,\
-      user_private_hash: user_private_hash,\
-      user_transactions_directoryID: user_transactions_directoryID }
+      user_transactions_directoryID: user_transactions_directoryID,\
+      created_at: created_at }
   end
 
   def user_builder(dataDescription, dataCertificate)

@@ -25,9 +25,9 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    return unless session[:user_private_hash] && session[:user_public_hash]
+    return unless session[:user_public_hash]
     if user_exsited?
-      @current_user ||= User.fetch_user(session[:user_private_hash])
+      @current_user ||= User.fetch_user(session[:user_public_hash])
     else
       session[:user_public_hash] = nil
     end
@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_exsited?
-    result = deepq_client.get_data_entry_by_data_certificate(users_directoryID, session[:user_private_hash])
+    result = deepq_client.get_data_entry_by_data_certificate(users_directoryID, session[:user_public_hash])
     false if result.nil?
     true  if result.present?
   end
