@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :logged_in?, :current_user
+  helper_method :logged_in?, :current_user, :has_enough_point?
 
   def initialize
     deepq_client
@@ -37,6 +37,11 @@ class ApplicationController < ActionController::Base
     userID   = current_user.user_public_hash
     password = current_user.password
     deepq_client.create_user(directoryID, "provider", userID, password)
+  end
+
+  def has_enough_point?(article_price)
+    current_point = current_user.calc_current_point
+    current_point - article_price.to_i > 0
   end
 
   def user_exsited?

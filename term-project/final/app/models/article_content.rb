@@ -3,11 +3,11 @@ class ArticleContent < ApplicationRecord
     count = @@deepq_client.count_data_entry(article_contents_directoryID) -1
     contents = @@deepq_client.get_data_entry_by_index(article_contents_directoryID, count)
 
-    contents_data = JSON.parse(contents["dataDescription"])
+    version = contents["dataCertificate"]
 
+    contents_data = JSON.parse(contents["dataDescription"])
     contents = contents_data["contents"]
     created_at = contents_data["created_at"]
-    version = JSON.parse(contents["dataCertificate"])
 
     ArticleContent.new(contents: contents, created_at: created_at)
   end

@@ -13,6 +13,8 @@ class ArticleController < ApplicationController
   def view
     @article_summary = ArticleSummary.fetch_article_summary(params[:article_details_directoryID])
     @details = ArticleDetail.fetch_article_details(params[:article_details_directoryID])
+    @is_obtained_article = is_obtained_article?(params[:article_details_directoryID])
+    @is_author = is_author?(params[:article_details_directoryID])
   end
 
   def new
@@ -77,11 +79,16 @@ class ArticleController < ApplicationController
     #article contents directoryID
       #dataDescription
         dataDescription_contents     = params[:contents]
+        created_at                   = Time.new
+
+        article_contents_data_description = article_contents_data_description_builder(dataDescription_contents,\
+          created_at)
       #dataCertificate
         dataCertificate_contents     = "version 0 part 0"
 
       #commit article contents
-        article_contents = article_contents_builder(dataDescription_contents, dataCertificate_contents)
+        article_contents = article_contents_builder(article_contents_data_description,\
+          dataCertificate_contents)
         commit_article_contents(article_contents_directoryID, article_contents)
 
     redirect_to article_index_path
@@ -154,6 +161,10 @@ class ArticleController < ApplicationController
   end
 
   #article contents functions
+  def article_contents_data_description_builder(contents, created_at)
+    article_contents_data_description = { contents: contents, created_at: created_at}
+  end
+
   def article_contents_builder(dataDescription, dataCertificate)
     article_contents = {dataDescription: dataDescription, dataCertificate: dataCertificate }
   end
@@ -211,9 +222,21 @@ class ArticleController < ApplicationController
       dataCertificate, dataOwner, dataDescription, dataAccessPath)
   end
 
-  def has_enough_points?(article)
-    current_user.calc_current_point.to_i > article.fetch_offer_price.to_i
+  def is_obtained_article?(article_details_directoryID)
+    return false unless logged_in?
+    article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
+
+    result = deepq_client.get_data_entry_by_data_certificate(article_summary.purchased_users_directoryID,\
+      current_user.user_private_hash)
+    
+     !result.nil? && !result["dataDescription"].nil? &&\
+       (JSON.parse(result["dataDescription"]))["user_private_hash"] == current_user.user_private_hash
   end
 
+  def is_author?(article_details_directoryID)
+    return false unless logged_in?
+    article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
+    article_summary.author_public_hash == current_user.user_public_hash
+  end
 
 end

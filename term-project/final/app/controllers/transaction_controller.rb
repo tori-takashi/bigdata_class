@@ -1,36 +1,59 @@
 class TransactionController < ApplicationController
 
   def purchase_article
-    article = Article.find(params[:article_id])
+    article_details_directoryID = params[:article_details_directoryID]
 
-    unless has_enough_points?
-      redirect_to article_path(params[:article_id])
+    article_summary = ArticleSummary.fetch_article_summary(article_details_directoryID)
+    article_details = ArticleDetail.fetch_article_details(article_details_directoryID)
+
+    purchased_users_directoryID = article_summary.purchased_users_directoryID
+
+    unless has_enough_point?(article_details.offerPrice)
+      redirect_to view_article_path(article_details_directoryID)
       return
     end
 
-    article_dataCertificate = current_user.user_hash
-    article_data_directoryID = article.directoryID
+    #purchased_users_directoryID
+      #offerPrice
+        offerPrice        = article_details.offerPrice
 
-    deepq_client.create_user(article_data_directoryID, "provider", current_user.user_hash, "testpass")
-    deepq_client.create_data_entry(article_data_directoryID, current_user.user_hash, "testpass", "0",\
-      "99999999", article_dataCertificate, current_user.user_hash, article_dataCertificate, "AnonJournal")
+      #dataDescription
+        user_private_hash = current_user.user_private_hash
+        created_at        = Time.new
 
-    offerPrice = article.fetch_offer_price
-    purchase_history_dataCertificate = article.directoryID
-    purchase_history_dataDescription = "#{article.directoryID} #{-offerPrice.to_i}"
-    purchase_history_directoryID = current_user.purchase_history_directoryID
+        user_purchased_data_description = user_purchased_data_description_builder(user_private_hash,\
+          created_at)
 
-    deepq_client.create_data_entry(purchase_history_directoryID, current_user.user_hash + "_provider",\
-      "testpass", offerPrice, "99999999", purchase_history_dataCertificate,\
-      current_user.user_hash, purchase_history_dataDescription, "AnonJournal")
+      #dataCertificate
+        dataCertificate   = current_user.user_private_hash
 
-    redirect_to article_path(params[:article_id])
+      #commit user_purchased
+        user_purchased = user_purchased_builder(offerPrice, user_purchased_data_description, dataCertificate)
+        commit_user_purchased(purchased_users_directoryID, user_purchased)
 
-  end
+    #user_transactions_directoryID
+      #offerPrice
+        offerPrice
 
-  def has_enough_points?(article)
-    current_point = current_user.calc_current_point
-    current_point - article.fetch_offer_price > 0
+      #dataDescription
+        amount = (offerPrice.to_i)*-1
+        reason = "purchase_article"
+        details = article_details.title
+        created_at
+
+        user_transaction_data_description = user_transaction_data_description_builder(\
+          amount, reason, details, created_at)
+
+      #dataCertificate
+        dataCertificate = SecureRandom.hex(64)
+
+      #commit user transaction
+        user_transaction = user_transaction_builder(offerPrice, user_transaction_data_description,\
+          dataCertificate)
+        commit_user_transaction(current_user.user_transactions_directoryID, user_transaction)
+
+        redirect_to view_article_path(article_details_directoryID)
+        
   end
 
   def add_point
@@ -61,6 +84,31 @@ class TransactionController < ApplicationController
         commit_user_transaction(current_user.user_transactions_directoryID, user_transaction)
 
       redirect_to article_index_path
+  end
+
+  def user_purchased_data_description_builder(user_private_hash, created_at)
+    user_purchased_data_description = { user_private_hash: user_private_hash, created_at: created_at }
+  end
+
+  def user_purchased_builder(offerPrice, dataDescription, dataCertificate)
+    user_purchased = {offerPrice: offerPrice, dataDescription: dataDescription, dataCertificate: dataCertificate}
+  end
+
+  def commit_user_purchased(purchased_users_directoryID, user_purchased)
+    register_current_user(purchased_users_directoryID)
+
+    directoryID     = purchased_users_directoryID
+    userID          = current_user.user_public_hash
+    password        = current_user.password
+    offerPrice      = user_purchased[:offerPrice]
+    dueDate         = "0"
+    dataCertificate = user_purchased[:dataCertificate]
+    dataOwner       = current_user.user_public_hash
+    dataDescription = user_purchased[:dataDescription].to_json
+    dataAccessPath  = "AnonJournal"
+
+    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+      dataCertificate, dataOwner, dataDescription, dataAccessPath)
   end
 
   def purchase_history

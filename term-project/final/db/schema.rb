@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_19_071625) do
+ActiveRecord::Schema.define(version: 2019_06_19_092951) do
 
   create_table "article_contents", force: :cascade do |t|
     t.string "contents"
@@ -34,6 +34,12 @@ ActiveRecord::Schema.define(version: 2019_06_19_071625) do
     t.string "author_manipulate_directoryID"
     t.string "article_details_directoryID"
     t.string "purchased_users_directoryID"
+  end
+
+  create_table "purchased_users", force: :cascade do |t|
+    t.string "offerPrice"
+    t.string "user_private_hash"
+    t.string "created_at"
   end
 
   create_table "user_transactions", force: :cascade do |t|

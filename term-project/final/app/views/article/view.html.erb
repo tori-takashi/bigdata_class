@@ -7,18 +7,18 @@
 </div>
 
 <% if logged_in? %>
-  <% if @is_obtained %>
+  <% if @is_author || @is_obtained_article %>
     <div id="article-content">
-      <%= @details.fetch_article_content %>
+      <%= @details.fetch_article_contents.contents %>
     </div>
   <% else %>
     <div id="price">
       <%= @details.offerPrice %> point!
     </div>
 
-    <%if @is_able_to_purchase %>
+    <%if has_enough_point?(@details.offerPrice.to_i) %>
       <div id="purchase-article-button">
-        <%= button_to "buy it now!", transaction_purchase_article_path(params: {article_summary: @article_summary} ) %>
+        <%= button_to "buy it now!", transaction_purchase_article_path(article_details_directoryID: @article_summary.article_details_directoryID) %>
       </div>
     <% else %>
       <div id="purchase-points-button">
