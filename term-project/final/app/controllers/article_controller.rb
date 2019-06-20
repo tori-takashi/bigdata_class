@@ -27,13 +27,11 @@ class ArticleController < ApplicationController
     article_summaries_directoryID  = @article_summaries_directoryID
     article_details_directoryID    = deepq_client.create_directory
     article_contents_directoryID   = deepq_client.create_directory
-    author_manipulate_directoryID  = deepq_client.create_directory
     purchased_users_directoryID    = deepq_client.create_directory
 
     register_current_user(article_summaries_directoryID)
     register_current_user(article_details_directoryID)
     register_current_user(article_contents_directoryID)
-    register_current_user(author_manipulate_directoryID)
 
     #article_summaries_directoryID
       #dataDescription
@@ -42,11 +40,9 @@ class ArticleController < ApplicationController
         created_at
         article_details_directoryID
         purchased_users_directoryID
-        author_manipulate_directoryID
 
         article_summary_data_description = article_summary_data_desciption_builder(author_name,\
-          author_public_hash, created_at, article_details_directoryID, purchased_users_directoryID,\
-          author_manipulate_directoryID)
+          author_public_hash, created_at, article_details_directoryID, purchased_users_directoryID)
 
       #dataCertificate
         dataCertificate_summary      = article_details_directoryID
@@ -98,15 +94,14 @@ class ArticleController < ApplicationController
 
   # article summaries functions
   def article_summary_data_desciption_builder(author_name, author_public_hash, created_at,\
-    article_details_directoryID, purchased_users_directoryID, author_manipulate_directoryID)
+    article_details_directoryID, purchased_users_directoryID )
 
     article_summary_data_description =\
     { author_name: author_name,\
       author_public_hash: author_public_hash,\
       created_at: created_at,\
       article_details_directoryID: article_details_directoryID,\
-      purchased_users_directoryID: purchased_users_directoryID,\
-      author_manipulate_directoryID: author_manipulate_directoryID }
+      purchased_users_directoryID: purchased_users_directoryID }
   end
 
   def article_summary_builder(dataDescription, dataCertificate)
@@ -178,26 +173,6 @@ class ArticleController < ApplicationController
     dataCertificate = article_contents[:dataCertificate]
     dataOwner       = current_user.user_public_hash
     dataDescription = article_contents[:dataDescription].to_json
-    dataAccessPath  = "AnonJournal"
-
-    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
-      dataCertificate, dataOwner, dataDescription, dataAccessPath)
-  end
-
-  #author manipulate
-  def author_manipulate_data_description_builder(amount)
-    author_manipulate = { amount: amount, created_at: Time.new }
-  end
-
-  def author_manipulate_builder(author_manipulate_directoryID, author_manipulate)
-    directoryID     = article_contents_directoryID
-    userID          = current_user.user_public_hash
-    password        = current_user.password
-    offerPrice      = "0"
-    dueDate         = "0"
-    dataCertificate = SecureRandom.hex(16)
-    dataOwner       = current_user.user_public_hash
-    dataDescription = author_manipulate[:dataDescription].to_json
     dataAccessPath  = "AnonJournal"
 
     deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\

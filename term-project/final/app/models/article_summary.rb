@@ -8,13 +8,11 @@ class ArticleSummary < ApplicationRecord
     author_name                   = summary_data["author_name"]
     author_public_hash            = summary_data["author_public_hash"]
     created_at                    = summary_data["created_at"]
-    author_manipulate_directoryID = summary_data["author_manipulate_directoryID"]
     article_details_directoryID   = summary_data["article_details_directoryID"]
     purchased_users_directoryID   = summary_data["purchased_users_directoryID"]
 
     ArticleSummary.new(author_name: author_name, author_public_hash: author_public_hash,\
-      created_at: created_at, author_manipulate_directoryID: author_manipulate_directoryID,\
-      article_details_directoryID: article_details_directoryID,\
+      created_at: created_at, article_details_directoryID: article_details_directoryID,\
       purchased_users_directoryID: purchased_users_directoryID)
   end
 
