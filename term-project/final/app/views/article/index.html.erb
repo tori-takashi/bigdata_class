@@ -11,6 +11,9 @@
       <div>
         Your histories are <%= link_to "here", transaction_purchase_history_path %>
       </div>
+      <div>
+        Your uploaded articles are <%= link_to "here", uploaded_articles_path %>
+      </div>
     <% end %>
   </div>
 
@@ -42,14 +45,14 @@
       <% @articles.each do |article| %>
         <% if article[:article_details].status == "public" %>
           <div class = "article-list-member">
-           <%= link_to article[:article_details].title, view_article_path(article_details_directoryID: article_summary.article_details_directoryID) %> 
+           <%= link_to article[:article_details].title, view_article_path(article_details_directoryID: article[:article_summary].article_details_directoryID) %> 
           </div>
           <div>
             <%= article[:article_details].summary %>
           </div>
         <% end %>
       <% end %>
-      
+
     <% end %>
   </div>
 </div>

@@ -1,17 +1,7 @@
 class ArticleController < ApplicationController
 
   def index
-    @articles = []
-    summary_array = deepq_client.list_data_entry(@article_summaries_directoryID)
-    summary_array.each do |summary|
-      article = []
-      article_summary_arguments = JSON.parse(summary["dataDescription"])
-
-      article_summary = ArticleSummary.new(article_summary_arguments)
-      article_details = ArticleDetail.fetch_article_details(article_summary.article_details_directoryID)
-
-      @articles.push({article_summary: article_summary, article_details: article_details})
-    end
+    @articles = articles_builder
   end
 
   def view
@@ -150,11 +140,40 @@ class ArticleController < ApplicationController
         article_contents = article_contents_builder(article_contents_data_description,\
           dataCertificate_contents)
         commit_article_contents(article_contents_directoryID, article_contents)
+        
+    if status == "deleted"
+      redirect_to article_index_path
+    else
+      redirect_to view_article_path(article_details_directoryID)
+    end
+  end
 
-    redirect_to view_article_path(article_details_directoryID)
+  def uploaded_articles
+    @uploaded_articles = []
+    articles = articles_builder
+
+    @uploaded_articles = articles.select{ |article| 
+      article[:article_summary][:author_public_hash] == current_user.user_public_hash &&\
+        article[:article_details].status != "deleted"
+    }
   end
 
   private
+
+  def articles_builder
+    articles = []
+    summary_array = deepq_client.list_data_entry(@article_summaries_directoryID)
+    summary_array.each do |summary|
+      article = []
+      article_summary_arguments = JSON.parse(summary["dataDescription"])
+
+      article_summary = ArticleSummary.new(article_summary_arguments)
+      article_details = ArticleDetail.fetch_article_details(article_summary.article_details_directoryID)
+
+      articles.push({article_summary: article_summary, article_details: article_details})
+    end
+    articles
+  end
 
   # article summaries functions
   def article_summary_data_desciption_builder(author_name, author_public_hash, created_at,\

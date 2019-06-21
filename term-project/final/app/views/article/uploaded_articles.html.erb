@@ -1,0 +1,9 @@
+<div class = "page-title">
+  uploaded articles
+</div>
+
+<% @uploaded_articles.each do |article| %>
+  <div>
+    <%= link_to article[:article_details].title, view_article_path(article[:article_summary].article_details_directoryID) %>
+  </div>
+<% end %>
