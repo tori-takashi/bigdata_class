@@ -10,10 +10,11 @@ class ArticleDetail < ApplicationRecord
     summary                      = latest_details_data["summary"]
     updated_at                   = latest_details_data["updated_at"]
     article_contents_directoryID = latest_details_data["article_contents_directoryID"]
-    version                      = latest_details_data["version"]
+    version                      = latest_details["dataCertificate"]
+    article_details_directoryID  = article_details_directoryID
 
     ArticleDetail.new(title: title, offerPrice: offerPrice, summary: summary, updated_at: updated_at,\
-      article_contents_directoryID: article_contents_directoryID)
+      version: version, article_contents_directoryID: article_contents_directoryID)
   end
 
   def fetch_article_contents

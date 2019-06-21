@@ -13,6 +13,7 @@ class ArticleController < ApplicationController
   def view
     @article_summary = ArticleSummary.fetch_article_summary(params[:article_details_directoryID])
     @details = ArticleDetail.fetch_article_details(params[:article_details_directoryID])
+    @contents = @details.fetch_article_contents.contents
     @is_obtained_article = is_obtained_article?(params[:article_details_directoryID])
     @is_author = is_author?(params[:article_details_directoryID])
   end
@@ -88,6 +89,63 @@ class ArticleController < ApplicationController
         commit_article_contents(article_contents_directoryID, article_contents)
 
     redirect_to article_index_path
+  end
+
+  def update_article
+
+    @contents = params[:contents]
+    @article_details_directoryID = params[:article_details_directoryID]
+    @is_author = is_author?(@article_details_directoryID)
+
+    @article_details = ArticleDetail.fetch_article_details(@article_details_directoryID)
+    @article_contents_directoryID = @article_details.article_contents_directoryID
+
+    @current_version_number = @article_details.version.split(" ")[1].to_i
+  end
+
+  def commit_changes
+    update_version_number = params[:current_version_number].to_i + 1
+
+    article_details_directoryID = params[:article_details_directoryID]
+    article_contents_directoryID = params[:article_contents_directoryID]
+
+    #article_details_directoryID
+      #offerPrice
+        offerPrice                   = params[:offerPrice]
+
+      #dataDescription
+        title                        = params[:title]
+        summary                      = params[:summary]
+        updated_at                   = Time.new
+        article_contents_directoryID
+
+        article_details_data_description = article_details_data_description_builder(title, summary,\
+          updated_at, article_contents_directoryID)
+
+      #dataCertificate
+        dataCertificate_details      = "version #{update_version_number}"
+
+      #commit article details
+        article_details = article_details_builder(offerPrice, article_details_data_description,\
+          dataCertificate_details)
+        commit_article_details(article_details_directoryID, article_details)
+
+    #article contents directoryID
+      #dataDescription
+        dataDescription_contents     = params[:contents]
+        created_at                   = Time.new
+
+        article_contents_data_description = article_contents_data_description_builder(dataDescription_contents,\
+          created_at)
+      #dataCertificate
+        dataCertificate_contents     = "version #{update_version_number} part 0"
+
+      #commit article contents
+        article_contents = article_contents_builder(article_contents_data_description,\
+          dataCertificate_contents)
+        commit_article_contents(article_contents_directoryID, article_contents)
+
+    redirect_to view_article_path(article_details_directoryID)
   end
 
   private
@@ -172,23 +230,22 @@ class ArticleController < ApplicationController
     password        = current_user.password
     offerPrice      = "0"
     dueDate         = "0"
-    #dataCertificate
+    dataCertificate = article_contents[:dataCertificate]
     dataOwner       = current_user.user_public_hash
     #dataDescription
     dataAccessPath  = "AnonJournal"
 
     dataDescription_array = article_contents[:dataDescription][:contents].scan(/.{1,#{one_content_max_word}}/m)
 
-    version = 0
-    part    = 0
+    version = dataCertificate.split(" ")[1]
 
     split_count.times do |i|
       splitted_dataDescription = article_contents_data_description_builder(dataDescription_array[i],\
         article_contents[:dataDescription][:created_at]).to_json
-      dataCertificate = "version #{version} part #{i}"
+      splitted_dataCertificate = "version #{version} part #{i}"
 
       deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
-        dataCertificate, dataOwner, splitted_dataDescription, dataAccessPath)
+        splitted_dataCertificate, dataOwner, splitted_dataDescription, dataAccessPath)
     end
 
   end

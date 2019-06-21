@@ -7,9 +7,15 @@
 </div>
 
 <% if logged_in? %>
+  <% if @is_author %>
+    <div id = "article-edit-button">
+    <%= link_to "edit article", update_article_path(article_details_directoryID: @article_summary.article_details_directoryID, contents: @contents) %>
+    <%= @details.version %>
+    </div>
+  <% end %>
   <% if @is_author || @is_obtained_article %>
     <div id="article-content">
-      <%= @details.fetch_article_contents.contents %>
+      <%= @contents %>
     </div>
   <% else %>
     <div id="price">

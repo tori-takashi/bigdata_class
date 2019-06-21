@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2019_06_19_092951) do
     t.string "offerPrice"
     t.string "updated_at"
     t.string "article_contents_directoryID"
+    t.string "article_details_directoryID"
     t.string "version"
   end
 
