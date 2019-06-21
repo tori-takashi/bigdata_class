@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2019_06_19_092951) do
 
   create_table "article_details", force: :cascade do |t|
     t.string "title"
+    t.string "status"
     t.string "summary"
     t.string "offerPrice"
     t.string "updated_at"

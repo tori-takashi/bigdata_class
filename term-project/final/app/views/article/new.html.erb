@@ -10,6 +10,10 @@
         <%= f.text_field :title %>
       </div>
 
+      <div id="select-article-status">
+        <%= f.select :status, [["public", "public"], ["private", "private"]], selected: "public" %>
+      </div>
+
       <div id="upload-form-summary">
         <%= f.label "summary : " %>
         <%= f.text_field :summary %>

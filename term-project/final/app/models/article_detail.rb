@@ -6,6 +6,7 @@ class ArticleDetail < ApplicationRecord
     latest_details_data = JSON.parse(latest_details["dataDescription"])
 
     title                        = latest_details_data["title"]
+    status                       = latest_details_data["status"]
     offerPrice                   = latest_details["offerPrice"]
     summary                      = latest_details_data["summary"]
     updated_at                   = latest_details_data["updated_at"]
@@ -13,7 +14,7 @@ class ArticleDetail < ApplicationRecord
     version                      = latest_details["dataCertificate"]
     article_details_directoryID  = article_details_directoryID
 
-    ArticleDetail.new(title: title, offerPrice: offerPrice, summary: summary, updated_at: updated_at,\
+    ArticleDetail.new(title: title, status: status, offerPrice: offerPrice, summary: summary, updated_at: updated_at,\
       version: version, article_contents_directoryID: article_contents_directoryID)
   end
 

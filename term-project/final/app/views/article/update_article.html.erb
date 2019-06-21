@@ -15,6 +15,10 @@
         Next version is ver.<%= @current_version_number + 1 %>
       </div>
 
+      <div id="select-article-status">
+        <%= f.select :status, [["public", "public"], ["private", "private",], ["delete", "deleted"]], selected: @article_details.status %>
+      </div>
+
       <div id="upload-form-summary">
         <%= f.label "summary : " %>
         <%= f.text_field :summary, value: @article_details.summary%>

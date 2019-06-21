@@ -58,11 +58,12 @@ class ArticleController < ApplicationController
 
       #dataDescription
         title                        = params[:title]
+        status                       = params[:status]
         summary                      = params[:summary]
         updated_at
         article_contents_directoryID
 
-        article_details_data_description = article_details_data_description_builder(title, summary,\
+        article_details_data_description = article_details_data_description_builder(title, status, summary,\
           updated_at, article_contents_directoryID)
 
       #dataCertificate
@@ -115,11 +116,12 @@ class ArticleController < ApplicationController
 
       #dataDescription
         title                        = params[:title]
+        status                       = params[:status]
         summary                      = params[:summary]
         updated_at                   = Time.new
         article_contents_directoryID
 
-        article_details_data_description = article_details_data_description_builder(title, summary,\
+        article_details_data_description = article_details_data_description_builder(title, status, summary,\
           updated_at, article_contents_directoryID)
 
       #dataCertificate
@@ -182,11 +184,12 @@ class ArticleController < ApplicationController
   end
 
   # article details functions
-  def article_details_data_description_builder(title, summary, updated_at,\
+  def article_details_data_description_builder(title, status, summary, updated_at,\
     article_contents_directoryID)
 
     article_details_data_description = \
     { title: title,\
+      status: status,\
       summary: summary,\
       updated_at: updated_at,\
       article_contents_directoryID: article_contents_directoryID }
