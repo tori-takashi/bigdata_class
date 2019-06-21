@@ -37,12 +37,19 @@
   <p>Article List</p>
 
   <div class = "article-list">
-    <% if @article_summaries %>
-      <% @article_summaries.each do |article_summary| %>
-        <div class = "article-list-member">
-         <%= link_to article_summary.fetch_title, view_article_path(article_details_directoryID: article_summary.article_details_directoryID) %> 
-        </div>
+    <% if @articles %>
+
+      <% @articles.each do |article| %>
+        <% if article[:article_details].status == "public" %>
+          <div class = "article-list-member">
+           <%= link_to article[:article_details].title, view_article_path(article_details_directoryID: article_summary.article_details_directoryID) %> 
+          </div>
+          <div>
+            <%= article[:article_details].summary %>
+          </div>
+        <% end %>
       <% end %>
+      
     <% end %>
   </div>
 </div>

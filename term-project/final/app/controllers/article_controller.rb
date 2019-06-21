@@ -1,12 +1,16 @@
 class ArticleController < ApplicationController
 
   def index
-    @article_summaries = []
+    @articles = []
     summary_array = deepq_client.list_data_entry(@article_summaries_directoryID)
     summary_array.each do |summary|
+      article = []
       article_summary_arguments = JSON.parse(summary["dataDescription"])
+
       article_summary = ArticleSummary.new(article_summary_arguments)
-      @article_summaries.push(article_summary)
+      article_details = ArticleDetail.fetch_article_details(article_summary.article_details_directoryID)
+
+      @articles.push({article_summary: article_summary, article_details: article_details})
     end
   end
 
