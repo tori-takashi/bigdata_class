@@ -24,6 +24,10 @@ class ApplicationController < ActionController::Base
     @article_summaries_directoryID ||= AnonJournal::Application.config.article_summaries_directoryID
   end
 
+  def one_content_max_word
+    @one_content_max_word ||= AnonJournal::Application.config.one_content_max_word
+  end
+
   def current_user
     return unless session[:user_public_hash]
     if user_exsited?

@@ -36,7 +36,7 @@ class ArticleController < ApplicationController
     #article_summaries_directoryID
       #dataDescription
         author_name                    = current_user.user_name
-        author_public_hash           = current_user.user_public_hash
+        author_public_hash             = current_user.user_public_hash
         created_at
         article_details_directoryID
         purchased_users_directoryID
@@ -121,7 +121,6 @@ class ArticleController < ApplicationController
 
     deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
       dataCertificate, dataOwner, dataDescription, dataAccessPath)
-
   end
 
   # article details functions
@@ -165,18 +164,33 @@ class ArticleController < ApplicationController
   end
 
   def commit_article_contents(article_contents_directoryID, article_contents)
+    word_count = article_contents[:dataDescription][:contents].length
+    split_count = (word_count/one_content_max_word) + 1
+    
     directoryID     = article_contents_directoryID
     userID          = current_user.user_public_hash
     password        = current_user.password
     offerPrice      = "0"
     dueDate         = "0"
-    dataCertificate = article_contents[:dataCertificate]
+    #dataCertificate
     dataOwner       = current_user.user_public_hash
-    dataDescription = article_contents[:dataDescription].to_json
+    #dataDescription
     dataAccessPath  = "AnonJournal"
 
-    deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
-      dataCertificate, dataOwner, dataDescription, dataAccessPath)
+    dataDescription_array = article_contents[:dataDescription][:contents].scan(/.{1,#{one_content_max_word}}/m)
+
+    version = 0
+    part    = 0
+
+    split_count.times do |i|
+      splitted_dataDescription = article_contents_data_description_builder(dataDescription_array[i],\
+        article_contents[:dataDescription][:created_at]).to_json
+      dataCertificate = "version #{version} part #{i}"
+
+      deepq_client.create_data_entry(directoryID, userID, password, offerPrice, dueDate,\
+        dataCertificate, dataOwner, splitted_dataDescription, dataAccessPath)
+    end
+
   end
 
   #create purchase history

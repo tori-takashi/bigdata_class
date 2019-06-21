@@ -41,14 +41,17 @@ module AnonJournal
 
       puts "receiving users and article list directoryID..."
 
-      users_result             = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
+      users_result                = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
         "users_directoryID")
-      article_summaries_result = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
+      article_summaries_result    = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
         "article_summaries_directoryID")
+      one_content_max_word_result = deepq_client.get_data_entry_by_data_certificate(server_info_directoryID,\
+        "one_content_max_word")
 
       puts "setting directoryIDs..."
       config.users_directoryID             = users_result["dataDescription"]
       config.article_summaries_directoryID = article_summaries_result["dataDescription"]
+      config.one_content_max_word          = one_content_max_word_result["dataDescription"].to_i
     else
       server_password = ""
 
@@ -66,6 +69,9 @@ module AnonJournal
       server_info_directoryID       = deepq_client.create_directory
       puts "done\n"
       
+      puts "setting configurations..."
+      one_content_max_word = "5000"
+      
       puts "establishing the relationship..."
       deepq_client.create_user(server_info_directoryID, "provider", server_info_directoryID, server_password)
 
@@ -74,6 +80,9 @@ module AnonJournal
       deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
         server_password, "0", "0", "article_summaries_directoryID", article_summaries_directoryID,\
         article_summaries_directoryID, "AnonJournal")
+      deepq_client.create_data_entry(server_info_directoryID, server_info_directoryID,\
+        server_password, "0", "0", "one_content_max_word", server_info_directoryID, one_content_max_word,\
+        "AnonJournal")
       
       puts "creating the config file #{config_file_path} ..."
       File.open(config_file_path, "w") do |file|
@@ -83,6 +92,7 @@ module AnonJournal
       puts "applying the configurations..."
       config.users_directoryID             = users_directoryID
       config.article_summaries_directoryID = article_summaries_directoryID
+      config.one_content_max_word          = one_content_max_word.to_i
     end
 
     puts "***** initialize completed !!! *****"
