@@ -1,0 +1,46 @@
+<div id="article-title">
+  <%= @details.title %>
+</div>
+
+<div id="article-author">
+  Author : <%= @article_summary.author_name %>
+</div>
+
+<% if logged_in? %>
+  <% if @is_author %>
+    <div id = "article-edit-button">
+    <%= link_to "edit article", update_article_path(article_details_directoryID: @article_summary.article_details_directoryID, contents: @contents) %>
+    <%= @details.version %>
+    </div>
+  <% end %>
+  <% if @is_author || @is_obtained_article %>
+    <div id="article-content">
+      <%= @contents %>
+    </div>
+  <% else %>
+    <div id="price">
+      <%= @details.offerPrice %> point!
+    </div>
+
+    <%if has_enough_point?(@details.offerPrice.to_i) %>
+      <div id="purchase-article-button">
+        <%= button_to "buy it now!", transaction_purchase_article_path(article_details_directoryID: @article_summary.article_details_directoryID) %>
+      </div>
+    <% else %>
+      <div id="purchase-points-button">
+        <%= button_to "purchase points", transaction_add_point_path, method: :get %>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <div>
+    If you want to see? please login!
+    <div class ="user-registration">
+      <%= link_to "user registration", new_user_path %>
+    </div>
+
+    <div>
+      <%= link_to "Login", user_login_path %>
+    </div>
+ </div>
+<% end %>

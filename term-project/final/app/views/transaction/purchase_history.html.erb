@@ -1,0 +1,26 @@
+<div class = "page-title">
+  Transaction history
+</div>
+
+<div>
+  <table>
+  <tr>
+    <th>reason</th>
+    <th>amount</th>
+    <th>details</th>
+    <th>commit time</th>
+  </tr>
+    <% @transactions.each do |transaction| %>
+      <tr>
+        <td><%= transaction[:reason]     %></td>
+        <td><%= transaction[:amount]     %></td>
+        <td><%= transaction[:details]    %></td>
+        <td><%= transaction[:created_at] %></td>
+      </tr>
+    <% end %>
+        <td>current point</td>
+        <td><%= @current_point %></td>
+        <td><%= %></td>
+        <td><%= %></td>
+  </table>
+</div>

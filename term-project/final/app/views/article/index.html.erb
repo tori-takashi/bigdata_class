@@ -1,0 +1,58 @@
+<div class = "page-title">
+
+  <div>
+    <% if logged_in? %>
+      <div>
+        Hello! <%= current_user.user_name %>, You have <%= current_user.calc_current_point %> point!
+      </div>
+      <div>
+        If you want more point? You can buy it from <%= link_to "here", transaction_add_point_path %>
+      </div>
+      <div>
+        Your histories are <%= link_to "here", transaction_purchase_history_path %>
+      </div>
+      <div>
+        Your uploaded articles are <%= link_to "here", uploaded_articles_path %>
+      </div>
+    <% end %>
+  </div>
+
+  <div>
+  <% if logged_in? %>
+    <%= link_to "Logout", user_logout_path %>
+  <% else %>
+    <div class ="user-registration">
+      <%= link_to "user registration", new_user_path %>
+    </div>
+
+    <div>
+      <%= link_to "Login", user_login_path %>
+    </div>
+  <% end %>
+  </div>
+
+  <%if logged_in? %>
+    <div class = "upload-link">
+      <%= link_to "Upload", new_article_path %>
+    </div>
+  <% end %>
+
+  <p>Article List</p>
+
+  <div class = "article-list">
+    <% if @articles %>
+
+      <% @articles.each do |article| %>
+        <% if article[:article_details].status == "public" %>
+          <div class = "article-list-member">
+           <%= link_to article[:article_details].title, view_article_path(article_details_directoryID: article[:article_summary].article_details_directoryID) %> 
+          </div>
+          <div>
+            <%= article[:article_details].summary %>
+          </div>
+        <% end %>
+      <% end %>
+
+    <% end %>
+  </div>
+</div>

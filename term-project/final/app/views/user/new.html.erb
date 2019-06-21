@@ -1,0 +1,26 @@
+<div class = "page-title">
+  User Registration
+</div>
+
+<div class = "user-registration-input-area">
+  <%= form_with url: user_index_path do |f| %>
+    <div>
+      <%= f.label "user_public_hash : #{@user_public_hash}" %>
+      <%= f.hidden_field :user_public_hash, value: @user_public_hash %>
+    </div>
+
+    <div>
+      <%= f.label "user_name : " %>
+      <%= f.text_field :user_name %>
+    </div>
+
+    <div>
+      <%= f.label "password" %>
+      <%= f.password_field :password %>
+    </div>
+
+    <div>
+      <%= f.submit "register" %>
+    </div>
+  <% end %>
+</div>

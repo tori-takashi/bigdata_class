@@ -1,0 +1,42 @@
+<div class = "page-title">
+  Edit your article
+</div>
+
+<% if logged_in? && @is_author %>
+  <div class = "article-input_area">
+    <%= form_with url: article_commit_changes_path do |f| %>
+      <%= f.hidden_field :current_version_number, value: @current_version_number %>
+      <%= f.hidden_field :article_details_directoryID, value: @article_details_directoryID %>
+      <%= f.hidden_field :article_contents_directoryID, value: @article_contents_directoryID %>
+
+      <div id="upload-form-title">
+        <%= f.label "title : " %>
+        <%= f.text_field :title, value: @article_details.title %>
+        Next version is ver.<%= @current_version_number + 1 %>
+      </div>
+
+      <div id="select-article-status">
+        <%= f.select :status, [["public", "public"], ["private", "private",], ["delete", "deleted"]], selected: @article_details.status %>
+      </div>
+
+      <div id="upload-form-summary">
+        <%= f.label "summary : " %>
+        <%= f.text_field :summary, value: @article_details.summary%>
+      </div>
+
+      <div id="upload-form-contents">
+        <%= f.label "contents : " %>
+        <%= f.text_area :contents, value: @contents %>
+      </div>
+
+      <div id="upload-form-offer-price">
+        <%= f.label "offer price : " %>
+        <%= f.text_field :offerPrice, value: @article_details.offerPrice %>
+      </div>
+
+      <div id="upload-form-submit">
+        <%= f.submit "update", data: { diesabled_with: "processing..." } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

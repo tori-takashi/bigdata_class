@@ -1,0 +1,45 @@
+<div class = "page-title">
+  Upload your article
+</div>
+
+<% if logged_in? %>
+  <div class = "article-input_area">
+    <%= form_with url: article_upload_path do |f| %>
+      <div id="upload-form-title">
+        <%= f.label "title : " %>
+        <%= f.text_field :title %>
+      </div>
+
+      <div id="select-article-status">
+        <%= f.select :status, [["public", "public"], ["private", "private"]], selected: "public" %>
+      </div>
+
+      <div id="upload-form-summary">
+        <%= f.label "summary : " %>
+        <%= f.text_field :summary %>
+      </div>
+
+      <div id="upload-form-contents">
+        <%= f.label "contents : " %>
+        <%= f.text_area :contents %>
+      </div>
+
+      <div id="upload-form-offer-price">
+        <%= f.label "offer price : " %>
+        <%= f.text_field :offerPrice %>
+      </div>
+
+      <div id="upload-form-submit">
+        <%= f.submit "upload", data: { diesabled_with: "processing..." } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div>
+    Please login before posting an article.
+  </div>
+  <div>
+    <%= link_to "Register", new_user_path %>
+    <%= link_to "Login", user_login_path %>
+  </div>
+<% end %>
